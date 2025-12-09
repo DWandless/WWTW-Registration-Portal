@@ -1,12 +1,11 @@
 import streamlit as st
-from helpers import hide_sidebar, remove_st_branding
+from helpers import hide_sidebar, remove_st_branding, init_page
 from pathlib import Path
 import base64
 
 hide_sidebar()
 remove_st_branding()
-
-st.set_page_config(page_title="Thank You", page_icon="🎉", layout="wide")
+init_page("Thank You")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "assets"
