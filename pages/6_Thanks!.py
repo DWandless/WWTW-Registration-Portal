@@ -58,13 +58,6 @@ st.markdown(
         background: white;
         cursor: pointer;
     }}
-
-    /* Center Streamlit button container */
-    .center-btn {{
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }}
     </style>
     """,
     unsafe_allow_html=True
@@ -78,11 +71,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Perfectly centered button ---
-st.markdown("<div class='center-btn'>", unsafe_allow_html=True)
-if st.button("Return Home"):
-    st.switch_page("Home.py")
-st.markdown("</div>", unsafe_allow_html=True)
+# --- PERFECTLY CENTERED BUTTON ---
+col1, col2, col3 = st.columns([3, 2, 3])   # Middle column is centered on page
+
+with col2:
+    if st.button("Return Home"):
+        st.switch_page("Home.py")
 
 
 
