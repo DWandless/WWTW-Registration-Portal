@@ -1,4 +1,4 @@
-
+# home.py
 import streamlit as st
 import pandas as pd
 import os
@@ -20,14 +20,6 @@ ICON_PATH = ASSETS_DIR / "page_icon.png"
 # ---------------------------------------------
 # Page Setup
 # ---------------------------------------------
-
-def get_auth_url(): # Get Microsoft OAuth authorization URL
-        auth_url, _ = oauth.create_authorization_url(
-            AUTHORIZE_URL,
-            prompt="select_account",
-            resource=CLIENT_ID,
-        )
-        return auth_url
 
 st.set_page_config(page_icon= ICON_PATH, layout="wide")
 remove_st_branding()
@@ -53,6 +45,14 @@ oauth = OAuth2Session(
 )
 
 LOGOUT_URL = f"{AUTHORITY}/oauth2/logout?post_logout_redirect_uri={REDIRECT_URI}"
+
+def get_auth_url(): # Get Microsoft OAuth authorization URL
+        auth_url, _ = oauth.create_authorization_url(
+            AUTHORIZE_URL,
+            prompt="select_account",
+            resource=CLIENT_ID,
+        )
+        return auth_url
 
 # ---------------------------------------------
 # Handle Microsoft redirect

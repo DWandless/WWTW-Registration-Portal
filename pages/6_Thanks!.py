@@ -1,3 +1,4 @@
+# thanks.py
 import streamlit as st
 from helpers import hide_sidebar, remove_st_branding
 from Home import get_auth_url
