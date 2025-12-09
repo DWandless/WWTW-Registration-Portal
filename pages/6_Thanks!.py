@@ -1,15 +1,17 @@
 import streamlit as st
-from helpers import hide_sidebar, remove_st_branding, init_page
+from helpers import hide_sidebar, remove_st_branding
 from pathlib import Path
 import base64
 
 hide_sidebar()
 remove_st_branding()
-init_page("Thank You")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "assets"
 LOGO_PATH = ASSETS_DIR / "WWTW_2025.jpg"
+ICON_PATH = ASSETS_DIR / "page_icon.png"
+
+st.set_page_config(page_icon= ICON_PATH, layout="wide")
 
     # Convert image to base64
 with open(LOGO_PATH, "rb") as img_file:
