@@ -44,7 +44,6 @@ st.markdown(
         text-align: center;
     }}
 
-    /* Style Streamlit button */
     div.stButton > button {{
         background: rgba(255,255,255,0.85);
         color: black;
@@ -59,24 +58,32 @@ st.markdown(
         background: white;
         cursor: pointer;
     }}
+
+    /* Center Streamlit button container */
+    .center-btn {{
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Content
-st.markdown("<div style='display:flex; justify-content:center;'>", unsafe_allow_html=True)
+# --- Content ---
 st.markdown("<div class='title'>🎉 Thank You!</div>", unsafe_allow_html=True)
+
 st.markdown(
     "<div class='body'>Your registration has been successfully submitted. We appreciate your participation!</div>",
     unsafe_allow_html=True,
 )
 
-# Centered button
-col1, col2, col3 = st.columns([1,1,1])
-with col2:
-    if st.button("Return Home"):
-        st.switch_page("Home.py")
+# --- Perfectly centered button ---
+st.markdown("<div class='center-btn'>", unsafe_allow_html=True)
+if st.button("Return Home"):
+    st.switch_page("Home.py")
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
