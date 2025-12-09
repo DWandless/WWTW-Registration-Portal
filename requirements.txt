@@ -1,0 +1,10 @@
+plotly
+supabase
+streamlit
+Authlib
+pandas
+openpyxl
+folium
+matplotlib
+PyJWT[crypto]>=2.6.0
+requests>=2.28
