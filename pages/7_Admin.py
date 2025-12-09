@@ -14,12 +14,14 @@ from helpers import (
     delete_member,
     hide_sidebar,
     back_button,
+    remove_st_branding
 )
 
 # -----------------------------------------------------
 # Page Setup
 # -----------------------------------------------------
 init_page("Admin Panel", "wide")
+remove_st_branding()
 hide_sidebar()
 
 # -----------------------------------------------------

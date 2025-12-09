@@ -7,6 +7,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from db import get_supabase
 import xml.etree.ElementTree as ET
+from streamlit.components.v1 import html as st_html
 import math
 import os
 import re
@@ -583,3 +584,18 @@ def sanitize_text(value: str) -> str:
     value = unicodedata.normalize("NFKC", value)
     value = re.sub(r"[\x00-\x1f\x7f]", "", value)
     return value.strip()
+
+
+def remove_st_branding():
+    # ------------------ HIDE STREAMLIT STYLE ELEMENTS TEST ------------------
+    st_html(
+        """
+        <script>
+        window.addEventListener('load', () => {
+            window.top.document.querySelectorAll(`[href*="streamlit.io"]`)
+                .forEach(e => e.style.display = 'none');
+        });
+        </script>
+        """,
+        height=0,
+    )

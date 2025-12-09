@@ -7,7 +7,8 @@ from helpers import (
     get_authenticated_supabase,
     hide_sidebar,
     back_button,
-    sanitize_text
+    sanitize_text,
+    remove_st_branding,
 )
 
 import re
@@ -64,6 +65,7 @@ user_name = (st.session_state.get("user_name", "") or "").strip()
 
 init_page("Step 2: Team Selection")
 render_user_sidebar(user_name, user_email)
+remove_st_branding()
 hide_sidebar()
 
 # -------------------------------------------------------

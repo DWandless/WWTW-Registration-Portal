@@ -1,7 +1,7 @@
 # pages/4_Logistics.py
 import streamlit as st
 from uuid import uuid4
-from helpers import init_page, render_user_sidebar, hide_sidebar, back_button, sanitize_text
+from helpers import init_page, render_user_sidebar, hide_sidebar, back_button, sanitize_text, remove_st_branding
 
 import re
 import unicodedata
@@ -53,6 +53,7 @@ user_name = (st.session_state.get("user_name", "") or "").strip()
 # Page
 init_page("Step 4: Logistics")
 render_user_sidebar(user_name, user_email)
+remove_st_branding()
 hide_sidebar()
 
 

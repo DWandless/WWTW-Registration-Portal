@@ -9,7 +9,8 @@ from helpers import (
     prepare_member_record,
     hide_sidebar,
     get_active_member_count,
-    sanitize_text
+    sanitize_text,
+    remove_st_branding,
 )
 
 import re
@@ -93,6 +94,7 @@ else:
 # Page layout
 init_page("Step 1: Personal Details")
 render_user_sidebar(user_name, user_email)
+remove_st_branding()
 hide_sidebar()
 
 # -------------------------------------------------------------------

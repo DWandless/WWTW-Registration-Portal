@@ -15,6 +15,7 @@ from helpers import (
     trim_outliers,
     expanded_bounds,
     mid_route_center,
+    remove_st_branding,
 )
 
 
@@ -40,6 +41,7 @@ user_name = st.session_state.get("user_name", "")
 init_page("Step 3: Route Selection")
 st.markdown("---")
 render_user_sidebar(user_name, user_email)
+remove_st_branding()
 hide_sidebar()
 
 team_route = draft.get("team_route")

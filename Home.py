@@ -7,7 +7,7 @@ from authlib.integrations.requests_client import OAuth2Session
 import jwt
 import base64
 from pathlib import Path
-from helpers import hide_sidebar
+from helpers import hide_sidebar, remove_st_branding
 
 # ---------------------------------------------
 # Icon loading
@@ -22,6 +22,7 @@ ICON_PATH = ASSETS_DIR / "page_icon.png"
 # ---------------------------------------------
 
 st.set_page_config(page_icon= ICON_PATH, layout="wide")
+remove_st_branding()
 hide_sidebar()
 
 # Azure Credentials
