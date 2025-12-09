@@ -77,17 +77,16 @@ st.markdown(
     unsafe_allow_html=True  
 )
 
-
 st.markdown(
         f"""
         <div style="display:flex; justify-content:center;">
-        <a href="{st.switch_page("Home.py")}" class="home-btn">
+        <a href="/?page=Home" class="home-btn">
             Return home 
         </a>
         </div>
         """,
         unsafe_allow_html=True,
-        )
+    )
 
 
 
