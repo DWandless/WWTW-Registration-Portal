@@ -56,6 +56,14 @@ st.markdown(
         transition: all 0.25s ease;
         cursor: pointer;
     }}
+
+    /* Hide the real Streamlit button */
+    .hidden-btn button {{
+        opacity: 0;
+        height: 0px;
+        width: 0px;
+        pointer-events: none;
+    }}
     </style>
     """,
     unsafe_allow_html=True
@@ -68,7 +76,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Centered HTML button + JS event → triggers Python
+# ---- Hidden Streamlit Button (real action happens here)
+col = st.columns(1)[0]
+with col:
+    hidden_clicked = st.button("REAL_HOME_BUTTON", key="hidden_home", help="", type="primary")
+
+# When hidden button is clicked → switch page
+if hidden_clicked:
+    st.switch_page("Home.py")
+
+# ---- Fake HTML button (beautiful one)
 st.markdown(
     """
     <div style='display:flex; justify-content:center;'>
@@ -78,19 +95,13 @@ st.markdown(
     </div>
 
     <script>
-        const btn = document.getElementById("home-btn");
-        btn.onclick = () => {{
-            window.parent.postMessage({{type: "streamlit:runCustomScript", script: "switch_home"}}, "*");
-        }};
+        document.getElementById("home-btn").onclick = function() {
+            const realBtn = window.parent.document.querySelector('button[k="hidden_home"]');
+            realBtn.click();
+        };
     </script>
     """,
     unsafe_allow_html=True
 )
-
-# Handle the JS request from above
-if "switch_home" in st.session_state.get("_custom_script_run", ""):
-    st.switch_page("Home.py")
-
-
 
 
