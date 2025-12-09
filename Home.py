@@ -206,11 +206,15 @@ if token and "id_token" in token:
 # Login button (not logged in)
 # ---------------------------------------------
 else:
-    auth_url, _ = oauth.create_authorization_url(
-        AUTHORIZE_URL,
-        prompt="select_account",
-        resource=CLIENT_ID,
-    )
+    def get_auth_url():
+        auth_url, _ = oauth.create_authorization_url(
+            AUTHORIZE_URL,
+            prompt="select_account",
+            resource=CLIENT_ID,
+        )
+        return auth_url
+    
+    auth_url = get_auth_url()
 
     # Get image
     BASE_DIR = Path(__file__).resolve().parent

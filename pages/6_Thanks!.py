@@ -1,10 +1,12 @@
 import streamlit as st
 from helpers import hide_sidebar, remove_st_branding
+from Home import get_auth_url
 from pathlib import Path
 import base64
 
 hide_sidebar()
 remove_st_branding()
+auth_url = get_auth_url()
 
 st.set_page_config(page_title="Thank You", page_icon="🎉", layout="wide")
 
@@ -77,16 +79,17 @@ st.markdown(
     unsafe_allow_html=True  
 )
 
+
 st.markdown(
         f"""
         <div style="display:flex; justify-content:center;">
-        <a href="/?page=Home" class="home-btn">
+        <a href="{auth_url}" class="home-btn">
             Return home 
         </a>
         </div>
         """,
         unsafe_allow_html=True,
-    )
+        )
 
 
 
