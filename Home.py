@@ -34,7 +34,7 @@ TENANT_ID = azure.get("tenant_id", "common")
 AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
 AUTHORIZE_URL = f"{AUTHORITY}/oauth2/authorize"
 TOKEN_URL = f"{AUTHORITY}/oauth2/token"
-REDIRECT_URI = "http://localhost:8501"
+REDIRECT_URI = "https://wwtw-registration.streamlit.app/"
 
 oauth = OAuth2Session(
     client_id=CLIENT_ID,
