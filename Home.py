@@ -97,8 +97,6 @@ if token and "id_token" in token:
 
     st.session_state["user_name"] = user_name
     st.session_state["user_email"] = user_email
-    st.success(f"Welcome, {user_name}")
-    st.caption(f"Signed in as: {user_email}")
 
     st.set_page_config(page_title="Home", page_icon= ICON_PATH, layout="wide")
 
