@@ -81,7 +81,7 @@ st.markdown(
 st.markdown(
         f"""
         <div style="display:flex; justify-content:center;">
-        <a href="{st.switch_page("Home")}" class="home-btn">
+        <a href="{st.switch_page("Home.py")}" class="home-btn">
             Return home 
         </a>
         </div>
