@@ -42,6 +42,7 @@ oauth = OAuth2Session(
     client_secret=CLIENT_SECRET,
     scope=["openid", "profile", "email"],
     redirect_uri=REDIRECT_URI,
+    popup=False
 )
 
 LOGOUT_URL = f"{AUTHORITY}/oauth2/logout?post_logout_redirect_uri={REDIRECT_URI}"
