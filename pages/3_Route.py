@@ -7,7 +7,6 @@ import folium
 
 from helpers import (
     init_page,
-    render_user_sidebar,
     hide_sidebar,
     back_button,
     load_gpx_points,
@@ -40,7 +39,6 @@ user_name = st.session_state.get("user_name", "")
 
 init_page("Step 3: Route Selection")
 st.markdown("---")
-render_user_sidebar(user_name, user_email)
 remove_st_branding()
 hide_sidebar()
 

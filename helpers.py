@@ -97,21 +97,6 @@ def get_authenticated_supabase():
 
     return client
 
-
-# -------------------------------------------------------------------
-# Sidebar User Info
-# -------------------------------------------------------------------
-def render_user_sidebar(user_name, user_email):
-    with st.sidebar:
-        st.success(f"Welcome {user_name}")
-        st.caption(f"Signed in as: {user_email}")
-
-        st.markdown("---")
-        if st.button("Logout"):
-            st.session_state.clear()
-            st.rerun()
-
-
 # -------------------------------------------------------------------
 # Convert Member Rows → DataFrame for Data Editor
 # -------------------------------------------------------------------

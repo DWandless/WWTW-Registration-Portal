@@ -3,7 +3,6 @@ import streamlit as st
 from uuid import uuid4
 from helpers import (
     init_page,
-    render_user_sidebar,
     get_authenticated_supabase,
     hide_sidebar,
     back_button,
@@ -64,7 +63,6 @@ user_email = (st.session_state.get("user_email", "") or "").strip().lower()
 user_name = (st.session_state.get("user_name", "") or "").strip()
 
 init_page("Step 2: Team Selection")
-render_user_sidebar(user_name, user_email)
 remove_st_branding()
 hide_sidebar()
 

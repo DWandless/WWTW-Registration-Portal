@@ -4,7 +4,6 @@ from uuid import uuid4
 from helpers import (
     init_page,
     back_button,
-    render_user_sidebar,
     get_authenticated_supabase,
     prepare_member_record,
     hide_sidebar,
@@ -93,7 +92,6 @@ else:
 
 # Page layout
 init_page("Step 1: Personal Details")
-render_user_sidebar(user_name, user_email)
 remove_st_branding()
 hide_sidebar()
 

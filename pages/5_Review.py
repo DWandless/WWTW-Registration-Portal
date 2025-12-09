@@ -1,6 +1,6 @@
 # pages/5_Review.py
 import streamlit as st
-from helpers import init_page, get_authenticated_supabase, render_user_sidebar, prepare_member_record, hide_sidebar, back_button, remove_st_branding
+from helpers import init_page, get_authenticated_supabase, prepare_member_record, hide_sidebar, back_button, remove_st_branding
 
 init_page("Step 5: Review & Submit")
 
@@ -36,7 +36,6 @@ client = get_authenticated_supabase()
 
 user_email = st.session_state.get("user_email", "")
 user_name  = st.session_state.get("user_name", "")
-render_user_sidebar(user_name, user_email)
 remove_st_branding()
 hide_sidebar()
 

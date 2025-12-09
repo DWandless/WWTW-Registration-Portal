@@ -6,7 +6,6 @@ from helpers import (
     init_page,
     require_access,
     get_authenticated_supabase,
-    render_user_sidebar,
     members_to_dataframe,
     apply_member_updates,
     export_excel,
@@ -66,7 +65,6 @@ st.session_state["user_email"] = user_email
 
 # Access control and sidebar
 user_email, user_name, is_admin = require_access()
-render_user_sidebar(user_name, user_email)
 
 # Authenticated Supabase Client
 client = get_authenticated_supabase()
