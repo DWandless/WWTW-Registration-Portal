@@ -8,7 +8,6 @@ from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from db import get_supabase
 import xml.etree.ElementTree as ET
 from streamlit.components.v1 import html as st_html
-from authlib.integrations.requests_client import OAuth2Session
 import math
 import os
 import re
@@ -600,31 +599,3 @@ def remove_st_branding():
         """,
         height=0,
     )
-
-# -------------------------------------------------------------------
-# Azure OAuth Helpers
-# ------------------------------------------------------------------
-def create_oauth_session(client_id: str, client_secret: str, redirect_uri: str):
-    """
-    Build a clean OAuth2Session without touching Streamlit.
-    Safe to import from any page — does NOT read st.secrets or run UI code.
-    """
-    return OAuth2Session(
-        client_id=client_id,
-        client_secret=client_secret,
-        scope=["openid", "profile", "email"],
-        redirect_uri=redirect_uri,
-    )
-
-def build_auth_url(oauth: OAuth2Session, tenant_id: str, client_id: str) -> str:
-    """
-    Generate the Azure AD authorization URL.
-    """
-    auth_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/authorize"
-
-    url, _ = oauth.create_authorization_url(
-        auth_url,
-        prompt="select_account",
-        resource=client_id,
-    )
-    return url
