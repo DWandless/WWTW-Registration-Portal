@@ -21,6 +21,14 @@ ICON_PATH = ASSETS_DIR / "page_icon.png"
 # Page Setup
 # ---------------------------------------------
 
+def get_auth_url(): # Get Microsoft OAuth authorization URL
+        auth_url, _ = oauth.create_authorization_url(
+            AUTHORIZE_URL,
+            prompt="select_account",
+            resource=CLIENT_ID,
+        )
+        return auth_url
+
 st.set_page_config(page_icon= ICON_PATH, layout="wide")
 remove_st_branding()
 hide_sidebar()
@@ -206,14 +214,6 @@ if token and "id_token" in token:
 # Login button (not logged in)
 # ---------------------------------------------
 else:
-    def get_auth_url():
-        auth_url, _ = oauth.create_authorization_url(
-            AUTHORIZE_URL,
-            prompt="select_account",
-            resource=CLIENT_ID,
-        )
-        return auth_url
-    
     auth_url = get_auth_url()
 
     # Get image
