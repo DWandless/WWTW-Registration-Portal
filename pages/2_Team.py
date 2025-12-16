@@ -208,7 +208,7 @@ Members: **{count}**
 # -------------------------------------------------------
 elif choice == "Create a Team":
     st.subheader("Create a New Team")
-    st.info("If you create a team you will automatically be assigned as the team leader.")
+    st.info("If you create a team you will automatically be assigned as the team leader of that team.")
 
     with st.form("create_team_form"):
         new_name_raw = st.text_input("Team Name *")
@@ -237,7 +237,7 @@ elif choice == "Create a Team":
                 "team_id": new_team["id"],
                 "team_name": new_name,
                 "team_route": new_route,
-                "role": "Captain",
+                "role": "Leader",
             })
             st.session_state["draft"] = draft
 
