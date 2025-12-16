@@ -147,6 +147,7 @@ if choice == "Continue Independently":
 # -------------------------------------------------------
 elif choice == "Join a Team":
     st.subheader("Available Teams")
+    st.info("Select an available team to join")
 
     if not teams:
         st.warning("No teams exist yet — you can create one below.")
@@ -207,6 +208,7 @@ Members: **{count}**
 # -------------------------------------------------------
 elif choice == "Create a Team":
     st.subheader("Create a New Team")
+    st.info("If you create a team you will automatically be assigned as the team leader.")
 
     with st.form("create_team_form"):
         new_name_raw = st.text_input("Team Name *")
