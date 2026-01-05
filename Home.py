@@ -100,9 +100,9 @@ if token and "id_token" in token:
 
     st.set_page_config(page_title="Home", page_icon= ICON_PATH, layout="wide")
 
-    
+    st.image("page_icon.png")
 
-    st.title("Walking With The Wounded")
+    st.title("DXC's Walking with the Wounded Registration Portal")
 
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
