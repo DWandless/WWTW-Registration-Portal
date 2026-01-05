@@ -102,7 +102,7 @@ if token and "id_token" in token:
 
     st.image("page_icon.png")
 
-    st.title("DXC's Walking with the Wounded Registration Portal")
+    st.title("TEST")
 
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
