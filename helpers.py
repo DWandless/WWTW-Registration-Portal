@@ -270,19 +270,6 @@ def apply_member_updates(edited_df, original_df, team_name_to_id, client):
             if col == "Team Name":
                 mapped = None if new_val == "Unassigned" else team_name_to_id.get(new_val)
                 if new_val != old_val:
-                    # If mapping to a team ID, enforce a hard cap of 5 active (non-waiting) members
-                    if mapped is not None:
-                        try:
-                            res = client.table("members").select("id", count="exact").eq("team_id", mapped).eq("on_waiting_list", False).execute()
-                            team_count = res.count or 0
-                        except Exception:
-                            team_count = 0
-
-                        # If the team is already full, skip assigning and warn the admin
-                        if team_count >= 5:
-                            st.error(f"Cannot add member to '{new_val}': team is already full (5 members).")
-                            continue
-
                     changes["team_id"] = mapped
                 continue
 

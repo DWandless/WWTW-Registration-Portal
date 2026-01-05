@@ -91,7 +91,7 @@ unassigned_members = [m for m in all_members if m.get("team_id") not in valid_te
 # -----------------------------------------------------
 # Utility: Member Editor Function
 # -----------------------------------------------------
-def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
+def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, title, dropdowns):
     if df_members.empty:
         st.info(f"No members to display for {title}.")
         return
@@ -108,12 +108,42 @@ def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
 
     df_ids = df_members.copy()
 
+    # Build dynamic Team Name options: include teams that have space (less than 5 active members)
+    # and always include any team present in this dataframe (so current members keep their team).
+    try:
+        active_members = client.table("members").select("team_id").eq("on_waiting_list", False).execute().data or []
+    except Exception:
+        active_members = []
+
+    counts = {}
+    for m in active_members:
+        tid = m.get("team_id")
+        if tid is None:
+            continue
+        counts[tid] = counts.get(tid, 0) + 1
+
+    current_team_names = set(df_members["Team Name"].tolist())
+
+    available_team_names = []
+    for tid, name in team_id_to_name.items():
+        c = counts.get(tid, 0)
+        if c < 5 or name in current_team_names:
+            available_team_names.append(name)
+
+    # Ensure Unassigned is always present and no null/None option appears
+    if "Unassigned" not in available_team_names:
+        available_team_names.append("Unassigned")
+
+    # Make a local copy of dropdowns and override Team Name options
+    local_dropdowns = dropdowns.copy()
+    local_dropdowns["Team Name"] = st.column_config.SelectboxColumn("Team Name", options=available_team_names)
+
     # ---- Show editable table (no delete column) ----
     edited = st.data_editor(
         df_members.drop(columns=["id"]),
         width="stretch",
         num_rows="fixed",
-        column_config=dropdowns,
+        column_config=local_dropdowns,
         key=f"editor_{title}"
     )
 
@@ -208,7 +238,7 @@ st.caption("Members added here when the event reaches capacity (200+ active part
 with st.expander(f"Waiting List ({len(waiting_members)})", expanded=False):
     if waiting_members:
         df_wait = members_to_dataframe(waiting_members, team_id_to_name)
-        render_member_editor(df_wait, team_name_to_id, client, "Waiting List", dropdowns)
+        render_member_editor(df_wait, team_id_to_name, team_name_to_id, client, "Waiting List", dropdowns)
     else:
         st.info("No users are currently on the waiting list.")
 
@@ -222,7 +252,7 @@ st.caption("Participants who registered but are not part of any team. Assign the
 with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
     if unassigned_members:
         df_un = members_to_dataframe(unassigned_members, team_id_to_name)
-        render_member_editor(df_un, team_name_to_id, client, "Unassigned", dropdowns)
+        render_member_editor(df_un, team_id_to_name, team_name_to_id, client, "Unassigned", dropdowns)
     else:
         st.info("All members are assigned to teams.")
 
@@ -241,7 +271,7 @@ for team in teams_data:
 
         if team_members:
             df_team = members_to_dataframe(team_members, team_id_to_name)
-            render_member_editor(df_team, team_name_to_id, client, team["team_name"], dropdowns)
+            render_member_editor(df_team, team_id_to_name, team_name_to_id, client, team["team_name"], dropdowns)
         else:
             st.info("No members assigned to this team.")
 
