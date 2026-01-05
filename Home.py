@@ -100,7 +100,7 @@ if token and "id_token" in token:
 
     st.set_page_config(page_title="Home", page_icon= ICON_PATH, layout="wide")
 
-    # st.image("page_icon.png", width=100)
+    st.image("page_icon.png", width=100)
 
     st.title("DXC's Walking with the Wounded Registration Portal")
 
