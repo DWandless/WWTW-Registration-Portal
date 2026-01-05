@@ -100,9 +100,9 @@ if token and "id_token" in token:
 
     st.set_page_config(page_title="Home", page_icon= ICON_PATH, layout="wide")
 
-    st.image("page_icon.png")
+    # st.image("page_icon.png", width=100)
 
-    st.title("TEST")
+    st.title("DXC's Walking with the Wounded Registration Portal")
 
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
@@ -159,7 +159,7 @@ if token and "id_token" in token:
         st.link_button("Visit Official Event Page", "https://walkingwiththewounded.org.uk/", type="secondary")
     
     with col3:
-        st.markdown("#### Admin Panel")
+        st.markdown("#### Admin Dashboard")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel"):
             st.session_state["SessionID"] = str(uuid4())
