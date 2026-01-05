@@ -100,18 +100,22 @@ if token and "id_token" in token:
 
     st.set_page_config(page_title="Home", page_icon= ICON_PATH, layout="wide")
 
-    st.title("DXC's Walking with the Wounded Registration Portal")
-
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
 
+    st.image(ICON_PATH, width=100)
+
+    st.title("Register for the Cumbrian Challenge with DXC Technology")
+
     # ---- Intro Section ----
     st.markdown("""
-    ### Welcome to the Walking With The Wounded Registration Portal
+    ### Join DXC Technology in Supporting Walking With The Wounded
 
-    The **Cumbrian Challenge** is Walking With The Wounded's flagship fundraising event in the Lake District. Teams of 3–5 take on one of three stunning routes to raise funds for veterans who need mental health support, employment opportunities, and housing stability.
+    Welcome to DXC Technology’s official registration portal for the **Cumbrian Challenge**, the flagship fundraising event by Walking With The Wounded.  
+    This inspiring challenge takes place in the stunning Lake District, where teams of 3–5 tackle one of three scenic routes to raise vital funds for veterans in need of mental health support, employment opportunities, and housing stability.
 
-    Your participation helps transform lives. Thank you for supporting this incredible cause!
+    By signing up through DXC, you’re helping transform lives and make a real difference.  
+    **Thank you for being part of this incredible cause!**
     """)
 
     st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
@@ -145,29 +149,27 @@ if token and "id_token" in token:
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.markdown("#### 🆕 Register here!")
+        st.markdown("#### ➜ Register Here")
         st.write("Start your registration to join a team and prepare for the event.")
         if st.button("Start New Registration ▶"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/1_Personal.py")
 
     with col2:
-        st.markdown("#### 🔄 Already registered?")
+        st.markdown("#### ↪ Already Registered")
         st.write("Visit the official website to find out how you can fundraise.")
         st.link_button("Visit Official Event Page", "https://walkingwiththewounded.org.uk/", type="secondary")
     
     with col3:
-        st.markdown("#### Admin Panel")
+        st.markdown("#### 🛠 Admin Panel")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/7_Admin.py")
 
 
-
-
     with col4:
-        st.markdown("#### Logout")
+        st.markdown("#### ➜] Logout")
         st.write("Click below to securely log out of the portal.")
         if st.button("Logout"):
             # 1) Clear app-side state & caches
@@ -191,12 +193,6 @@ if token and "id_token" in token:
                 """,
                 unsafe_allow_html=True,
             )
-
-
-
-
-    # Logout button
-
 
 # ---------------------------------------------
 # Login button (not logged in)
