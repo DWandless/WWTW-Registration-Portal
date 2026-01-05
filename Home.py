@@ -157,7 +157,7 @@ if token and "id_token" in token:
         st.link_button("Visit Official Event Page", "https://walkingwiththewounded.org.uk/", type="secondary")
     
     with col3:
-        st.markdown("#### Admin Dashboard")
+        st.markdown("#### Admin Panel")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel"):
             st.session_state["SessionID"] = str(uuid4())
