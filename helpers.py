@@ -39,6 +39,7 @@ def init_page(page_title: str, layout: str = "wide", logo_link: str = "https://d
         icon_image=Image.open(ICON_PATH),
         size="large"
     )
+    st.image(ICON_PATH, width=100)
     st.title(page_title)
 
 # -------------------------------------------------------------------
