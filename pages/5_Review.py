@@ -99,7 +99,7 @@ cooldown_remaining = max(
 if submit_disabled and cooldown_remaining > 0:
     st.info(f"Please wait {cooldown_remaining:.0f} seconds before submitting again.")
 
-submit = st.button("✅ Confirm & Submit", disabled=submit_disabled)
+submit = st.button("✔ Confirm & Submit", disabled=submit_disabled)
 
 if submit:
     try:

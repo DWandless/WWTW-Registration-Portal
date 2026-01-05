@@ -152,7 +152,7 @@ if not points_raw:
         )
 
         st.download_button(
-            "⬇️ Download GPX (unavailable)",
+            "⬇ Download GPX",
             data=b"",
             file_name=f"{selected_route.lower()}_route.gpx",
             mime="application/gpx+xml",
@@ -162,7 +162,7 @@ if not points_raw:
         st.session_state.setdefault("route_pending_confirmation", False)
         st.session_state.setdefault("route_selection_temp", None)
 
-        if st.button("✅ Confirm Route"):
+        if st.button("✔ Confirm Route"):
             if team_route and selected_route != team_route:
                 st.session_state["route_selection_temp"] = selected_route
                 st.session_state["route_pending_confirmation"] = True
@@ -214,7 +214,7 @@ else:
             with open(gpx_path, "rb") as f:
                 gpx_bytes = f.read()
             st.download_button(
-                "⬇️ Download Route (GPX)",
+                "⬇ Download Route (GPX)",
                 data=gpx_bytes,
                 file_name=f"{selected_route.lower()}_route.gpx",
                 mime="application/gpx+xml",
@@ -222,7 +222,7 @@ else:
         except Exception as e:
             st.error(f"Error loading GPX for download: {e}")
             st.download_button(
-                "⬇️ Download GPX (error)",
+                "⬇ Download GPX (error)",
                 data=b"",
                 disabled=True
             )
@@ -231,7 +231,7 @@ else:
         st.session_state.setdefault("route_pending_confirmation", False)
         st.session_state.setdefault("route_selection_temp", None)
 
-        if st.button("✅ Confirm Route"):
+        if st.button("✔ Confirm Route"):
             if team_route and selected_route != team_route:
                 st.session_state["route_selection_temp"] = selected_route
                 st.session_state["route_pending_confirmation"] = True

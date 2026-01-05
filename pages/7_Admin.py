@@ -27,7 +27,7 @@ hide_sidebar()
 # 1) CHECK IF USER IS LOGGED IN (from home.py)
 # -----------------------------------------------------
 if "token" not in st.session_state or st.session_state["token"] is None:
-    st.error("❌ You must be logged in to access the Admin Panel.")
+    st.error("✖ You must be logged in to access the Admin Panel.")
     st.page_link("home.py", label="⬅ Return to Login")
     st.stop()
 
@@ -35,7 +35,7 @@ token = st.session_state["token"]
 
 # If somehow token exists but no id_token → treat as not logged in
 if "id_token" not in token:
-    st.error("❌ Invalid login session. Please sign in again.")
+    st.error("✖ Invalid login session. Please sign in again.")
     st.page_link("home.py", label="⬅ Return to Login")
     st.stop()
 
@@ -108,7 +108,7 @@ def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
 
     df_ids = df_members.copy()
 
-    # ---- 1️⃣ Show editable table (no delete column) ----
+    # ---- Show editable table (no delete column) ----
     edited = st.data_editor(
         df_members.drop(columns=["id"]),
         width="stretch",
@@ -120,7 +120,7 @@ def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
     # Restore IDs
     edited["id"] = df_ids["id"]
 
-    # ---- 2️⃣ Apply updates ----
+    # ---- Apply updates ----
     applied = apply_member_updates(edited, df_ids, team_name_to_id, client)
     if applied > 0:
         st.success(f"Applied {applied} update(s).")
@@ -146,7 +146,7 @@ def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
     pending_key = f"pending_delete_{title}"
     
     with cols[1]:
-        if st.button("🗑️ Delete", key=f"delete_btn_{title}", use_container_width=True):
+        if st.button("⌦ Delete", key=f"delete_btn_{title}", use_container_width=True):
             st.session_state[pending_key] = member_options[selected]
     
     # Confirmation dialog
@@ -156,19 +156,19 @@ def render_member_editor(df_members, team_name_to_id, client, title, dropdowns):
         matching_rows = df_members[df_members["id"] == member_id_str]
         member_name = matching_rows["Full Name"].values[0] if not matching_rows.empty else "Member"
         
-        st.error(f"⚠️ Delete '{member_name}'?")
+        st.error(f"⚠︎ Delete '{member_name}'?")
         
         confirm_cols = st.columns([1, 1, 2])
         
         with confirm_cols[0]:
-            if st.button("✅ Confirm", key=f"confirm_delete_yes_{title}", use_container_width=True):
+            if st.button("✔ Confirm", key=f"confirm_delete_yes_{title}", use_container_width=True):
                 delete_member(st.session_state[pending_key], client)
                 st.session_state[pending_key] = None
                 st.session_state.pop(f"delete_select_{title}", None)  # Clear selectbox state
                 st.rerun()
         
         with confirm_cols[1]:
-            if st.button("❌ Cancel", key=f"confirm_delete_no_{title}", use_container_width=True):
+            if st.button("✖ Cancel", key=f"confirm_delete_no_{title}", use_container_width=True):
                 st.session_state[pending_key] = None
                 st.session_state.pop(f"delete_select_{title}", None)  # Clear selectbox state
                 st.rerun()
@@ -255,23 +255,23 @@ for team in teams_data:
                 st.write(team['team_name'])
             
             with col2:
-                if st.button(f"🗑️ Delete", key=f"del_team_btn_{team['id']}", use_container_width=True):
+                if st.button(f"⌦ Delete", key=f"del_team_btn_{team['id']}", use_container_width=True):
                     st.session_state["confirm_delete_team"] = team["id"]
             
             # Confirmation dialog
             if st.session_state.get("confirm_delete_team") == team["id"]:
-                st.error(f"⚠️ Delete team '{team['team_name']}'? Members will be unassigned.")
+                st.error(f"⚠︎ Delete team '{team['team_name']}'? Members will be unassigned.")
                 
                 col_confirm, col_cancel = st.columns([1, 1])
                 
                 with col_confirm:
-                    if st.button("✅ Confirm", key=f"confirm_yes_{team['id']}", use_container_width=True):
+                    if st.button("✔ Confirm", key=f"confirm_yes_{team['id']}", use_container_width=True):
                         delete_team(team["id"], client)
                         st.session_state["confirm_delete_team"] = None
                         st.rerun()
                 
                 with col_cancel:
-                    if st.button("❌ Cancel", key=f"confirm_no_{team['id']}", use_container_width=True):
+                    if st.button("✖ Cancel", key=f"confirm_no_{team['id']}", use_container_width=True):
                         st.session_state["confirm_delete_team"] = None
                         st.rerun()
 

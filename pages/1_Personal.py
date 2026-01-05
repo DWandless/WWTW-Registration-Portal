@@ -160,7 +160,7 @@ current_count = get_active_member_count(client)
 event_is_full = current_count >= 200
 
 if event_is_full:
-    st.warning("⚠️ The event is currently full. If you aren't updating your information, your details will be added to the waiting list instead.")
+    st.warning("⚠︎ The event is currently full. If you aren't updating your information, your details will be added to the waiting list instead.")
 
 # -------------------------------------------------------------------
 # Form UI
