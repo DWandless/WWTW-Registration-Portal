@@ -106,6 +106,7 @@ if token and "id_token" in token:
     st.image(ICON_PATH, width=100)
 
     st.title("Register for the Cumbrian Challenge with DXC Technology")
+    st.write("---")
 
     # ---- Intro Section ----
     st.markdown("""

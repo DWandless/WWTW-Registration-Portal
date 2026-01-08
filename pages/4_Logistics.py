@@ -77,7 +77,7 @@ defaults = {
 # -------------------------------------------------------
 # UI
 # -------------------------------------------------------
-
+st.write("---")
 with st.form("logistics_form", clear_on_submit=False):
 
     st.selectbox(

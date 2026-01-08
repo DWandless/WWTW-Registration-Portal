@@ -115,6 +115,7 @@ st.session_state["teams"] = teams
 # -------------------------------------------------------
 current_team_id = draft.get("team_id") if "team_id" in draft else None
 
+st.write("---")
 choice = st.selectbox(
     "Select an option:",
     ["Continue Independently", "Join a Team", "Create a Team"],

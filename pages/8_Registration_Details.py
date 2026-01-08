@@ -74,6 +74,7 @@ current_user = (
 )
 
 if not current_user or not current_user.get("team_id"):
+    st.write("---")
     st.warning("You are not currently assigned to a team.")
     back_button("Home.py")
     st.stop()
@@ -116,9 +117,9 @@ team_members = (
 # -----------------------------------------------------
 # 5) Display
 # -----------------------------------------------------
+st.write("---")
 st.subheader(f"Team: {team['team_name']}")
 st.caption(f"Route: {team.get('route', 'Not set')}")
-st.caption("Below are the current registration details for all team members on your team.")
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
 # Explicit whitelist of visible columns

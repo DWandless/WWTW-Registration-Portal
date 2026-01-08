@@ -42,6 +42,7 @@ hide_sidebar()
 # ------------------------------------------------------------
 # Review UI - all values shown from draft, not database
 # ------------------------------------------------------------
+st.write("---")
 st.subheader("Review Your Registration")
 st.caption("Check your details below. Use the buttons to edit on the original pages.")
 

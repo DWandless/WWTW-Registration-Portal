@@ -98,7 +98,7 @@ hide_sidebar()
 # -------------------------------------------------------------------
 # Participation Agreement
 # -------------------------------------------------------------------
-
+st.write("---")
 st.subheader("Participation Agreement")
 st.markdown("""
 To participate you must agree to:
