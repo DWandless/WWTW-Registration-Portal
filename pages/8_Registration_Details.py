@@ -154,6 +154,7 @@ df_view = df[visible_columns]
 st.dataframe(
     df_view,
     use_container_width=True,
+    hide_index=True,
     column_config={
         "Camping Friday": st.column_config.CheckboxColumn(),
         "Camping Saturday": st.column_config.CheckboxColumn(),
