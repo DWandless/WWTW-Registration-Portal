@@ -265,7 +265,7 @@ else:
 
     # ✅ Title
     st.markdown(
-        "<div class='glass-title'>DXC's WWTF Registration Portal</div>",
+        "<div class='glass-title'>DXC's WWTW Registration Portal</div>",
         unsafe_allow_html=True
     )
 
