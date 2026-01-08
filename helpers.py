@@ -68,6 +68,8 @@ def require_access(user_key="user_emails", admin_key="admin_emails"):
 
     if not is_authorised:
         st.error("You do not have permission to access this page.")
+        back_button("Home.py")
+        st.write("---")
         st.stop()
 
     return user_email, user_name, is_admin
