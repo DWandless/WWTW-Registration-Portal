@@ -251,4 +251,3 @@ elif choice == "Create a Team":
             st.stop()
 
 back_button("pages/1_Personal.py")
-st.write("---")

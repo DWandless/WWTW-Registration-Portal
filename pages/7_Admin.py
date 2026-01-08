@@ -324,4 +324,3 @@ st.download_button(
 )
 
 back_button("Home.py")
-st.write("---")

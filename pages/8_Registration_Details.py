@@ -81,7 +81,7 @@ if not current_user or not current_user.get("team_id"):
     if st.button("Update Registration Details"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/1_Personal.py")
-            
+
     back_button("Home.py")
     st.stop()
 
@@ -161,4 +161,3 @@ if st.button("Update Registration Details"):
             st.switch_page("pages/1_Personal.py")
 
 back_button("Home.py")
-st.write("---")

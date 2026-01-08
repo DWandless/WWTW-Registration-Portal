@@ -290,4 +290,3 @@ else:
             st.error(f"Map render error: {e}")
 
 back_button("pages/2_Team.py")
-st.write("---")
