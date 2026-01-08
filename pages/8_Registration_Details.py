@@ -1,6 +1,7 @@
 import streamlit as st
 import jwt
 import pandas as pd
+from uuid import uuid4
 
 from helpers import (
     init_page,
@@ -117,12 +118,11 @@ team_members = (
 # -----------------------------------------------------
 st.subheader(f"Team: {team['team_name']}")
 st.caption(f"Route: {team.get('route', 'Not set')}")
-
+st.caption("Below are the current registration details for all team members on your team.")
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
 # Explicit whitelist of visible columns
 visible_columns = [
-    "Team Name",
     "Role",
     "Full Name",
     "Employee Email",
@@ -146,6 +146,12 @@ st.dataframe(
         "On Waiting List": st.column_config.CheckboxColumn(),
     }
 )
+
+st.write("---")
+st.caption("If you need to update your registration details, please click the button below.")
+if st.button("Update Registration Details"):
+            st.session_state["SessionID"] = str(uuid4())
+            st.switch_page("pages/1_Personal.py")
 
 back_button("Home.py")
 st.write("---")
