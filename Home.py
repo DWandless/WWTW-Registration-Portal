@@ -157,8 +157,10 @@ if token and "id_token" in token:
 
     with col2:
         st.markdown("#### ↪ Already Registered")
-        st.write("Visit the official website to find out how you can fundraise.")
-        st.link_button("Visit Official Event Page", "https://walkingwiththewounded.org.uk/", type="secondary")
+        st.write("View your current team and registration details.")
+        if st.button("View Registration Details"):
+            st.session_state["SessionID"] = str(uuid4())
+            st.switch_page("pages/8_Registration_Details.py")
     
     with col3:
         st.markdown("#### 🛠 Admin Panel")
