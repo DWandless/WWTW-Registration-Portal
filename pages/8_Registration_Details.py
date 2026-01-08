@@ -124,7 +124,15 @@ team_members = (
 # 5) Display
 # -----------------------------------------------------
 st.write("---")
-st.subheader(f"Team: {team['team_name']} — Route: {team.get('route', 'Not set')} ({len(team_members)}/5 Members)")
+
+st.markdown("### Team Overview")
+
+c1, c2, c3 = st.columns(3)
+
+c1.metric("Team", team["team_name"])
+c2.metric("Route", team.get("route", "Not set"))
+c3.metric("Members", f"{len(team_members)}/5")
+
 st.caption("Below are the current registration details for all team members within your team.")
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
@@ -155,6 +163,7 @@ st.dataframe(
 )
 
 st.write("---")
+st.markdown("### Update Your Registration Details")
 st.caption("If you need to update your registration details, please click the button below.")
 if st.button("Update Registration Details"):
             st.session_state["SessionID"] = str(uuid4())
