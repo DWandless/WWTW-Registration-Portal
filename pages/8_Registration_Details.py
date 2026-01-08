@@ -114,7 +114,7 @@ team_members = (
         "taking_car, travelling_from, on_waiting_list"
     )
     .eq("team_id", team_id)
-    .order("role", desc=True)
+    .order("role", desc=False)
     .execute()
     .data
     or []
