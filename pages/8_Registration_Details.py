@@ -126,6 +126,7 @@ team_members = (
 st.write("---")
 
 st.markdown("### Team Overview")
+st.caption("Below are the current registration details for all team members within your team.")
 
 c1, c2, c3 = st.columns(3)
 
@@ -133,7 +134,6 @@ c1.metric("Team", team["team_name"])
 c2.metric("Route", team.get("route", "Not set"))
 c3.metric("Members", f"{len(team_members)}/5")
 
-st.caption("Below are the current registration details for all team members within your team.")
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
 # Explicit whitelist of visible columns
