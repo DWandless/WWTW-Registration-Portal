@@ -98,7 +98,7 @@ if not team:
 team_members = (
     client
     .table("members")
-    .select("*")
+    .select("team_id, full_name, employee_email, role, preferred_route, shirt_size, camping_fri, camping_sat, taking_car, travelling_from")
     .eq("team_id", team_id)
     .order("role", desc=True)
     .execute()
