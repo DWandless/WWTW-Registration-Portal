@@ -124,8 +124,8 @@ team_members = (
 # 5) Display
 # -----------------------------------------------------
 st.write("---")
-st.subheader(f"Team: {team['team_name']}")
-st.caption(f"Route: {team.get('route', 'Not set')}")
+st.subheader(f"Team: {team['team_name']} — Route: {team.get('route', 'Not set')} ({len(team_members)}/5 Members)")
+st.caption("Below are the current registration details for all team members within your team.")
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
 # Explicit whitelist of visible columns
