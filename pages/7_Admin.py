@@ -28,7 +28,8 @@ hide_sidebar()
 # -----------------------------------------------------
 if "token" not in st.session_state or st.session_state["token"] is None:
     st.error("✖ You must be logged in to access the Admin Panel.")
-    st.page_link("home.py", label="⬅ Return to Login")
+    back_button("Home.py")
+    st.write("---")
     st.stop()
 
 token = st.session_state["token"]
@@ -36,7 +37,8 @@ token = st.session_state["token"]
 # If somehow token exists but no id_token → treat as not logged in
 if "id_token" not in token:
     st.error("✖ Invalid login session. Please sign in again.")
-    st.page_link("home.py", label="⬅ Return to Login")
+    back_button("Home.py")
+    st.write("---")
     st.stop()
 
 # -----------------------------------------------------
@@ -322,3 +324,4 @@ st.download_button(
 )
 
 back_button("Home.py")
+st.write("---")

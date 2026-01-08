@@ -144,3 +144,4 @@ if submit:
         st.session_state["submission_in_progress"] = False
 
 back_button("pages/4_Logistics.py")
+st.write("---")

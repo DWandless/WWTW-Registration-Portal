@@ -23,14 +23,16 @@ hide_sidebar()
 # -----------------------------------------------------
 if "token" not in st.session_state or not st.session_state["token"]:
     st.error("✖ You must be logged in to access this page.")
-    st.page_link("home.py", label="⬅ Return to Login")
+    back_button("Home.py")
+    st.write("---")
     st.stop()
 
 token = st.session_state["token"]
 
 if "id_token" not in token:
     st.error("✖ Invalid login session. Please sign in again.")
-    st.page_link("home.py", label="⬅ Return to Login")
+    back_button("Home.py")
+    st.write("---")
     st.stop()
 
 # -----------------------------------------------------
@@ -98,7 +100,11 @@ if not team:
 team_members = (
     client
     .table("members")
-    .select("team_id, full_name, employee_email, role, preferred_route, shirt_size, camping_fri, camping_sat, taking_car, travelling_from")
+    .select(
+        "team_id, full_name, employee_email, role, "
+        "shirt_size, camping_fri, camping_sat, "
+        "taking_car, travelling_from, on_waiting_list"
+    )
     .eq("team_id", team_id)
     .order("role", desc=True)
     .execute()
@@ -114,9 +120,32 @@ st.caption(f"Route: {team.get('route', 'Not set')}")
 
 df = members_to_dataframe(team_members, {team_id: team["team_name"]})
 
+# Explicit whitelist of visible columns
+visible_columns = [
+    "Team Name",
+    "Role",
+    "Full Name",
+    "Employee Email",
+    "Shirt Size",
+    "Camping Friday",
+    "Camping Saturday",
+    "Taking Car",
+    "Travelling From",
+    "On Waiting List",
+]
+
+df_view = df[visible_columns]
+
 st.dataframe(
-    df.drop(columns=["id"]),
-    use_container_width=True
+    df_view,
+    use_container_width=True,
+    column_config={
+        "Camping Friday": st.column_config.CheckboxColumn(),
+        "Camping Saturday": st.column_config.CheckboxColumn(),
+        "Taking Car": st.column_config.CheckboxColumn(),
+        "On Waiting List": st.column_config.CheckboxColumn(),
+    }
 )
 
 back_button("Home.py")
+st.write("---")

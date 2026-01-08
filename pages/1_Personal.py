@@ -256,3 +256,4 @@ if submitted:
         st.switch_page("pages/2_Team.py")
 
 back_button("Home.py")
+st.write("---")
