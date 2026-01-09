@@ -111,24 +111,25 @@ def members_to_dataframe(members, team_lookup=None):
         "id": str(m.get("id")),
         "Team Name": team_lookup.get(m.get("team_id"), "Unassigned"),
         "Role": m.get("role"),
-        "Preferred Route": m.get("preferred_route"),
-        "On Waiting List": bool(m.get("on_waiting_list")),
         "Full Name": m.get("full_name"),
+        "Organisation": m.get("organisation"),
         "Employee ID": m.get("employee_id"),
         "Employee Email": m.get("employee_email"),
         "Mobile Number": m.get("mobile_number"),
-        "Organisation": m.get("organisation"),
+        "Preferred Route": m.get("preferred_route"),
         "Shirt Size": m.get("shirt_size"),
+        "Travelling From": m.get("travelling_from"),
 
         # Booleans + Text
         "Forces Veteran": bool(m.get("forces_vet")),
         "Camping Friday": bool(m.get("camping_fri")),
         "Camping Saturday": bool(m.get("camping_sat")),
-        "Dropped Out": bool(m.get("dropped_out")),
         "Taking Car": bool(m.get("taking_car")),
-        "Notes": m.get("notes"),
+        "Travelling From": m.get("travelling_from"),
         "Hiking Experience": m.get("hiking_experience"),
-        "Travelling From": m.get("travelling_from")
+        "Notes": m.get("notes"),
+        "On Waiting List": bool(m.get("on_waiting_list")),
+        "Dropped Out": bool(m.get("dropped_out"))
 
     } for m in members])
 
