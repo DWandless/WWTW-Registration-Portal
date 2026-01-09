@@ -20,8 +20,9 @@ import unicodedata
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
 
-LOGO2_PATH = ASSETS_DIR / "logo2.png"
-LOGO_SMALL = ASSETS_DIR / "logo_small.png"
+LOGO_PATH = ASSETS_DIR / "logo.png"
+ICON_PATH = ASSETS_DIR / "logo2.png"
+
 
 # -------------------------------------------------------------------
 # Page Setup
@@ -29,16 +30,16 @@ LOGO_SMALL = ASSETS_DIR / "logo_small.png"
 def init_page(page_title: str, layout: str = "wide", logo_link: str = "https://dxc.com/uk/en"):
     st.set_page_config(
         page_title=page_title,
-        page_icon=Image.open(LOGO_SMALL),
+        page_icon=Image.open(ICON_PATH),
         layout=layout
     )
     st.logo(
-        Image.open(LOGO2_PATH),
+        Image.open(LOGO_PATH),
         link=logo_link,
-        icon_image=Image.open(LOGO_SMALL),
+        icon_image=Image.open(ICON_PATH),
         size="large"
     )
-    st.image(LOGO2_PATH, width=100)
+    st.image(ICON_PATH, width=100)
     st.title(page_title)
 
 # -------------------------------------------------------------------
