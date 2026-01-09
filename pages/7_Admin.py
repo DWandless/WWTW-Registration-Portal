@@ -226,6 +226,7 @@ dropdowns = {
     "Notes": st.column_config.TextColumn("Notes"),
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
+    "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
 }
 
 

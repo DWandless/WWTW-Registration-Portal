@@ -124,6 +124,7 @@ def members_to_dataframe(members, team_lookup=None):
         "Forces Veteran": bool(m.get("forces_vet")),
         "Camping Friday": bool(m.get("camping_fri")),
         "Camping Saturday": bool(m.get("camping_sat")),
+        "Dropped Out": bool(m.get("dropped_out")),
         "Taking Car": bool(m.get("taking_car")),
         "Notes": m.get("notes"),
         "Hiking Experience": m.get("hiking_experience"),
@@ -179,7 +180,7 @@ def export_excel(client):
         "Team Name", "On Waiting List", "Name", "Email", "Mobile Number", "Preferred Route", "Organisation",
         "Role", "Shirt Size", "Forces Veteran", "Camping Friday",
         "Camping Saturday", "Taking Car", "Hiking Experience",
-        "Travelling From", "Notes"
+        "Travelling From", "Notes", "Dropped Out"
     ]
 
     ws.append(HEADERS)
@@ -212,7 +213,8 @@ def export_excel(client):
             m.get("taking_car", False),
             m.get("hiking_experience", ""),
             m.get("travelling_from", ""),
-            m.get("notes", "")
+            m.get("notes", ""), 
+            m.get("dropped_out", False)
         ])
 
     _style_worksheet(ws)
@@ -244,6 +246,7 @@ COLUMN_MAP = {
     "Notes": "notes",
     "Hiking Experience": "hiking_experience",
     "Travelling From": "travelling_from",
+    "Dropped Out": "dropped_out",
 }
 
 
@@ -343,7 +346,7 @@ def prepare_member_record(draft: dict, on_waiting_list: bool | None = None, clie
         "team_id", "preferred_route", "role",
         "shirt_size", "forces_vet", "camping_fri", "camping_sat",
         "taking_car", "travelling_from", "notes", "hiking_experience",
-        "mobile_number", "organisation", "on_waiting_list"
+        "mobile_number", "organisation", "on_waiting_list", "dropped_out"
     }
 
     record = {}
