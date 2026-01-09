@@ -145,6 +145,7 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
         df_members.drop(columns=["id"]),
         width="stretch",
         num_rows="fixed",
+        hide_index=True,
         column_config=local_dropdowns,
         key=f"editor_{title}"
     )
