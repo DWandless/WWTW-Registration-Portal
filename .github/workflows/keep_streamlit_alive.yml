@@ -2,8 +2,8 @@ name: Keep Streamlit App Alive
 
 on:
   schedule:
-    - cron: "0 */6 * * *"  # every 6 hours
-  workflow_dispatch:       # allows manual run
+    - cron: "0 */12 * * *" 
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Ping Streamlit app
         run: |
-          curl -L --silent --show-error --fail https://wwtw-registration.streamlit.app
+          curl --silent --max-time 30 https://wwtw-registration.streamlit.app/_stcore/health
