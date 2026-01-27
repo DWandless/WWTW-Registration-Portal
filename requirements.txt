@@ -8,3 +8,5 @@ folium
 matplotlib
 PyJWT[crypto]>=2.6.0
 requests>=2.28
+selenium
+webdriver-manager
