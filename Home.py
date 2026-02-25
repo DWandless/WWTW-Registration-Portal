@@ -172,7 +172,7 @@ if token and "id_token" in token:
 
 
     with col4:
-        st.markdown("#### ➜] Logout")
+        st.markdown("#### ➜] Log out")
         st.write("Click below to securely log out of the portal.")
         if st.button("Logout"):
             # 1) Clear app-side state & caches
