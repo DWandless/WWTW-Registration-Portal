@@ -162,6 +162,21 @@ if token and "id_token" in token:
             except Exception:
                 pass
         return "pages/1_Form.py"
+    
+    # ---- Intro Section ----
+    st.markdown("""
+    ### Join DXC Technology in Supporting Walking With The Wounded
+
+    Welcome to DXC Technology’s official registration portal for the **Cumbrian Challenge**, the flagship fundraising event by Walking With The Wounded.  
+    This inspiring challenge takes place in the stunning Lake District, where teams of 3–5 tackle one of three scenic routes to raise vital funds for veterans in need of mental health support, employment opportunities, and housing stability.
+
+    By signing up through DXC, you’re helping transform lives and make a real difference.  
+    **Thank you for being part of this incredible cause!**
+    """)
+
+    st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
+
+    st.divider()
 
     # ---- Split Layout: New vs Existing ----
     col1, col2 = st.columns(2)
@@ -180,23 +195,9 @@ if token and "id_token" in token:
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/9_Volunteers.py")
 
-    st.markdown("---")
-    
-    # ---- Intro Section ----
-    st.markdown("""
-    ### Join DXC Technology in Supporting Walking With The Wounded
-
-    Welcome to DXC Technology’s official registration portal for the **Cumbrian Challenge**, the flagship fundraising event by Walking With The Wounded.  
-    This inspiring challenge takes place in the stunning Lake District, where teams of 3–5 tackle one of three scenic routes to raise vital funds for veterans in need of mental health support, employment opportunities, and housing stability.
-
-    By signing up through DXC, you’re helping transform lives and make a real difference.  
-    **Thank you for being part of this incredible cause!**
-    """)
-
-    st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
-
     st.divider()
-
+    
+    # ---- Split Layout: New vs Existing ----
     col3, col4, col5 = st.columns(3)
 
     with col3:
