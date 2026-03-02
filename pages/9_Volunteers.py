@@ -212,7 +212,7 @@ if submitted:
         "employee_email": email_clean,
         "employee_id": employee_id_clean,
         "mobile_number": mobile_clean or None,
-        "area": area_clean,
+        "area": "TEST", # testing functionality of inputting area
     })
     st.session_state["draft"] = draft
 
