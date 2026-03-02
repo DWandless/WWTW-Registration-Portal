@@ -135,12 +135,12 @@ defaults = {
     "full_name": draft.get("full_name") or user_name,
     "employee_email": draft.get("employee_email") or user_email,
     "employee_id": draft.get("employee_id") or "",
-    "area": draft.get("area") or None,
+    "area": draft.get("area") or [],
     "mobile_number": draft.get("mobile_number") or "",
 }
 
-if defaults["area"] not in AREA_OPTIONS:
-    defaults["area"] = None
+if not isinstance(defaults["area"], list):
+    defaults["area"] = []
 
 
 
@@ -183,7 +183,7 @@ with st.form("personal_form"):
     area = st.multiselect(
         "Volunteer Area *",
         AREA_OPTIONS,
-        index=AREA_OPTIONS.index(defaults["area"]) if defaults["area"] else 0,
+        default = defaults["area"],
     )
 
 
@@ -205,7 +205,7 @@ if submitted:
     email_clean = sanitize_text(employee_email).lower()
     employee_id_clean = sanitize_text(employee_id)
     mobile_clean = sanitize_text(mobile_number)
-    area_clean = sanitize_text(area)
+    area_clean = ", ".join([sanitize_text(a) for a in area])
 
     draft.update({
         "full_name": full_name_clean,
