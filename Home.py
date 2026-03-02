@@ -28,26 +28,31 @@ hide_sidebar()
 st.markdown(
     """
     <style>
-    button[data-testid="baseButton-primary"] {
+    div.stButton > button[data-testid="baseButton-primary"],
+    div.stButton > button[kind="primary"] {
         background-color: #6399F0 !important;
         color: white !important;
         border: 1px solid #6399F0 !important;
     }
-    button[data-testid="baseButton-primary"]:hover {
+    div.stButton > button[data-testid="baseButton-primary"]:hover,
+    div.stButton > button[kind="primary"]:hover {
         background-color: #4D86EE !important;
         color: white !important;
         border: 1px solid #4D86EE !important;
     }
-    button[data-testid="baseButton-primary"]:focus {
+    div.stButton > button[data-testid="baseButton-primary"]:focus,
+    div.stButton > button[kind="primary"]:focus {
         box-shadow: 0 0 0 0.2rem rgba(99, 153, 240, 0.35) !important;
     }
 
-    a[data-testid="baseLinkButton-primary"] {
+    [data-testid="stLinkButton"] a[data-testid="baseLinkButton-primary"],
+    [data-testid="stLinkButton"] a[kind="primary"] {
         background-color: #6399F0 !important;
         color: white !important;
         border: 1px solid #6399F0 !important;
     }
-    a[data-testid="baseLinkButton-primary"]:hover {
+    [data-testid="stLinkButton"] a[data-testid="baseLinkButton-primary"]:hover,
+    [data-testid="stLinkButton"] a[kind="primary"]:hover {
         background-color: #4D86EE !important;
         color: white !important;
         border: 1px solid #4D86EE !important;
@@ -135,7 +140,7 @@ if token and "id_token" in token:
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
 
-    st.image(ICON_PATH, width=100)
+    st.image(ICON_PATH, width=180)
 
     st.title("Register for the Cumbrian Challenge with DXC Technology")
     st.write("---")
@@ -213,7 +218,7 @@ if token and "id_token" in token:
             st.switch_page("pages/7_Admin.py")
 
     with col5:
-        st.markdown("#### 🛈︎ Learn More")
+        st.markdown("#### ⓘ Learn More")
         st.write("Learn more about the Cumbrian Challenge")
         st.link_button("Learn More", "https://walkingwiththewounded.org.uk/", type="secondary")
     
