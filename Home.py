@@ -28,26 +28,31 @@ hide_sidebar()
 st.markdown(
     """
     <style>
-    div.stButton > button {
+    div.stButton > button[data-testid="baseButton-primary"],
+    div.stButton > button[kind="primary"] {
         background-color: #6399F0 !important;
         color: white !important;
         border: 1px solid #6399F0 !important;
     }
-    div.stButton > button:hover {
+    div.stButton > button[data-testid="baseButton-primary"]:hover,
+    div.stButton > button[kind="primary"]:hover {
         background-color: #4D86EE !important;
         color: white !important;
         border: 1px solid #4D86EE !important;
     }
-    div.stButton > button:focus {
+    div.stButton > button[data-testid="baseButton-primary"]:focus,
+    div.stButton > button[kind="primary"]:focus {
         box-shadow: 0 0 0 0.2rem rgba(99, 153, 240, 0.35) !important;
     }
 
-    [data-testid="stLinkButton"] a {
+    [data-testid="stLinkButton"] a[data-testid="baseLinkButton-primary"],
+    [data-testid="stLinkButton"] a[kind="primary"] {
         background-color: #6399F0 !important;
         color: white !important;
         border: 1px solid #6399F0 !important;
     }
-    [data-testid="stLinkButton"] a:hover {
+    [data-testid="stLinkButton"] a[data-testid="baseLinkButton-primary"]:hover,
+    [data-testid="stLinkButton"] a[kind="primary"]:hover {
         background-color: #4D86EE !important;
         color: white !important;
         border: 1px solid #4D86EE !important;
@@ -135,7 +140,7 @@ if token and "id_token" in token:
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
 
-    st.image(ICON_PATH, width=100)
+    st.image(ICON_PATH, width=180)
 
     st.title("Register for the Cumbrian Challenge with DXC Technology")
     st.write("---")
@@ -182,14 +187,14 @@ if token and "id_token" in token:
     with col1:
         st.markdown("#### ➜ Register Here")
         st.write("Start your registration to join a team and prepare for the event.")
-        if st.button("Start New Registration"):
+        if st.button("Start New Registration", type="primary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/1_Personal.py")
     
     with col2:
         st.markdown("#### 𖹭 Sign up as a Volunteer")
         st.write("Volunteer to help out at the event.")
-        if st.button("Volunteer Registration"):
+        if st.button("Volunteer Registration", type="primary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/9_Volunteers.py")
 
@@ -201,26 +206,26 @@ if token and "id_token" in token:
     with col3:
         st.markdown("#### ↪ Already Registered")
         st.write("View your current team and registration details.")
-        if st.button("View Details"):
+        if st.button("View Details", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
     with col4:
         st.markdown("#### 🛠 Admin Panel")
         st.write("Access administrative functions and manage registrations.")
-        if st.button("Admin Panel"):
+        if st.button("Admin Panel", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/7_Admin.py")
 
     with col5:
-        st.markdown("#### 🛈︎ Learn More")
+        st.markdown("#### ⓘ Learn More")
         st.write("Learn more about the Cumbrian Challenge")
-        st.link_button("Learn More", "https://walkingwiththewounded.org.uk/", type="primary")
+        st.link_button("Learn More", "https://walkingwiththewounded.org.uk/", type="secondary")
     
     with col6:
         st.markdown("#### ➜] Logout")
         st.write("Click below to securely log out of the portal.")
-        if st.button("Logout"):
+        if st.button("Logout", type="secondary"):
             # 1) Clear app-side state & caches
             st.session_state.clear()
             try:
