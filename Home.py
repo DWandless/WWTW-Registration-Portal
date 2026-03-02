@@ -174,6 +174,8 @@ if token and "id_token" in token:
     **Thank you for being part of this incredible cause!**
     """)
 
+    st.write("") # spacing
+
     # ---- Split Layout: New vs Existing ----
     col1, col2 = st.columns(2)
 
@@ -199,7 +201,7 @@ if token and "id_token" in token:
     with col3:
         st.markdown("#### ↪ Already Registered")
         st.write("View your current team and registration details.")
-        if st.button("View Registration Details"):
+        if st.button("View Details"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
