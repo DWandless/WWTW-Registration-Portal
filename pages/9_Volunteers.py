@@ -193,12 +193,6 @@ try:
 except Exception:
     pass
 
-# Check if event is full
-current_count = get_active_member_count(client)
-event_is_full = current_count >= 20
-
-if event_is_full:
-    st.warning("⚠︎ We have reached our maximum number of volunteers. We will save your data to a waiting list in case a space becomes available.")
 
 # -------------------------------------------------------------------
 # Form UI
@@ -268,36 +262,18 @@ if submitted:
         pass
 
     # Logic
-    if event_is_full and not user_exists:
-        # NEW + FULL ⇒ waiting list
-        final_record = prepare_member_record(draft, True, client)
-        try:
-            res = client.table("volunteers").insert(final_record).execute()
-            new_id = res.data[0]["id"]
-            st.session_state["member_id"] = new_id
-            st.success("Thank you for registering!")
-            st.switch_page("pages/6_Thanks!.py")
-        except Exception as e:
-            st.error("Could not add you to the waiting list.")
-            st.exception(e)
 
-    elif event_is_full and user_exists and existing_member_at_submit.get("on_waiting_list", False):
-        # WAITING LIST + STILL FULL ⇒ cannot proceed
-        st.info("You are currently on the waiting list. You cannot edit your details while the event is full.")
-        st.stop()
-
-    else:
         # Event not full OR active user
-        final_record = prepare_member_record(draft, False, client)
-        try:
-            res = client.table("volunteers").insert(final_record).execute()
-            new_id = res.data[0]["id"]
-            st.session_state["member_id"] = new_id
-            st.success("Thank you for volunteering to help out!")
-            st.switch_page("pages/6_Thanks!.py")
-        except Exception as e:
-            st.error("Could not register your details.")
-            st.exception(e)
+    final_record = prepare_member_record(draft, False, client)
+    try:
+        res = client.table("volunteers").insert(final_record).execute()
+        new_id = res.data[0]["id"]
+        st.session_state["member_id"] = new_id
+        st.success("Thank you for volunteering to help out!")
+        st.switch_page("pages/6_Thanks!.py")
+    except Exception as e:
+        st.error("Could not register your details.")
+        st.exception(e)
 
 
 back_button("Home.py")

@@ -245,20 +245,7 @@ with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
     else:
         st.info("No volunteers have signed up yet.")
 
-# -----------------------------------------------------
-# Volunteer Waiting List
-# -----------------------------------------------------
-volunteers = client.table("volunteers").select('*').eq("on_waiting_list", True).execute().data or []
-st.markdown("---")
-st.subheader("Volunteer Waiting List")
-st.caption("Manage volunteers who have registered interest in volunteering and are on the waiting list.")
 
-with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
-    if volunteers:
-        df_vol = pd.DataFrame(volunteers)
-        st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
-    else:
-        st.info("No volunteers on the waiting list.")
 
 
 # -----------------------------------------------------
