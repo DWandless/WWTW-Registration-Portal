@@ -195,7 +195,7 @@ with st.form("personal_form"):
 # -------------------------------------------------------------------
 
 if submitted:
-    is_valid, error_msg = validate_form(full_name, employee_email, employee_id, mobile_number, area)
+    is_valid, error_msg = validate_form(full_name, employee_email, employee_id, mobile_number)
     if not is_valid:
         st.error(error_msg)
         st.stop()
