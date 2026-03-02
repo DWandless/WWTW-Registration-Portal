@@ -29,36 +29,6 @@ apply_header_font()
 st.markdown(
     """
     <style>
-    html, body {
-        height: 100%;
-        overflow: hidden;
-    }
-    .stApp {
-        height: 100vh;
-        overflow: hidden;
-    }
-    [data-testid="stAppViewContainer"] {
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    [data-testid="stMain"],
-    section.main,
-    .main,
-    .block-container {
-        height: 100vh;
-        overflow: hidden !important;
-    }
-
-    * {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    *::-webkit-scrollbar {
-        width: 0 !important;
-        height: 0 !important;
-    }
-
     div.stButton > button[data-testid="baseButton-primary"],
     div.stButton > button[kind="primary"] {
         background-color: #6399F0 !important;
@@ -315,6 +285,24 @@ else:
             background-repeat: no-repeat;
             height: 100vh;
             overflow: hidden;
+        }}
+
+        [data-testid="stAppViewContainer"],
+        [data-testid="stMain"],
+        section.main,
+        .main,
+        .block-container {{
+            height: 100vh;
+            overflow: hidden !important;
+        }}
+
+        * {{
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }}
+        *::-webkit-scrollbar {{
+            width: 0 !important;
+            height: 0 !important;
         }}
 
         .login-wrap {{
