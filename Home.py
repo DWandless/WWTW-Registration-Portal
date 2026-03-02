@@ -271,6 +271,11 @@ else:
     st.markdown(
         f"""
         <style>
+        html, body {{
+            height: 100%;
+            overflow: hidden;
+        }}
+
         .stApp {{
             background-image:
                 linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
@@ -278,25 +283,56 @@ else:
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            height: 100vh;
+            overflow: hidden;
+        }}
+
+        .login-wrap {{
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }}
+
+        .glass-card {{
+            width: min(560px, 92vw);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 18px;
+            padding: 2.25rem 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.35);
         }}
 
         .glass-title {{
             color: white;
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             text-align: center;
+        }}
+
+        .glass-subtitle {{
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 1.05rem;
+            line-height: 1.55;
+            text-align: center;
+            margin: 0 0 1.75rem 0;
         }}
 
         .login-btn {{
             display: inline-block;
-            margin-top: 1.5rem;
-            padding: 12px 28px;
+            width: 100%;
+            text-align: center;
+            padding: 14px 18px;
             background: rgba(255, 255, 255, 0.85);
             color: black;
             border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
+            font-size: 1.05rem;
             transition: all 0.25s ease;
         }}
 
@@ -309,39 +345,18 @@ else:
         unsafe_allow_html=True
     )
 
-    # Vertical center wrapper
-    st.markdown(
-        "<div style='display:flex; justify-content:center;'>",
-        unsafe_allow_html=True
-    )
-
-    # ✅ Title
-    st.markdown(
-        "<div class='glass-title'>DXC's WWTW Registration Portal</div>",
-        unsafe_allow_html=True
-    )
-
-    # ✅ Warning message
-    # st.markdown(
-    #     "<p style='color: white; font-size: 1rem; text-align: center;'>Please log in to continue</p>",
-    #     unsafe_allow_html=True
-    # )
-
-    # ✅ Login Button (Styled)
     st.markdown(
         f"""
-        <div style="display:flex; justify-content:center;">
-        <a href="{auth_url}" class="login-btn">
-            Login 
-        </a>
+        <div class="login-wrap">
+          <div class="glass-card">
+            <div class="glass-title">DXC's WWTW Registration Portal</div>
+            <div class="glass-subtitle">Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.</div>
+            <a href="{auth_url}" class="login-btn">Continue with Microsoft</a>
+          </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
-
-    # ✅ Frosted Glass Card End
-st.markdown("</div></div>", unsafe_allow_html=True)
     
 
 

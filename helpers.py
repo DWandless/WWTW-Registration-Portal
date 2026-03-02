@@ -51,7 +51,8 @@ def apply_header_font():
         [data-testid="stMarkdownContainer"] h3,
         [data-testid="stMarkdownContainer"] h4,
         [data-testid="stMarkdownContainer"] h5,
-        [data-testid="stMarkdownContainer"] h6 {{
+        [data-testid="stMarkdownContainer"] h6,
+        .glass-title {{
             font-family: 'GTStandardHeader', sans-serif !important;
         }}
         </style>
