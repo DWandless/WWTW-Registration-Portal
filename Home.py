@@ -354,8 +354,17 @@ else:
             transition: all 0.25s ease;
         }}
 
+        .login-btn:visited,
+        .login-btn:active,
+        .login-btn:focus {{
+            color: black;
+            text-decoration: none;
+        }}
+
         .login-btn:hover {{
             background: rgba(0, 123, 255, 1);
+            color: white;
+            text-decoration: none;
             transform: scale(1.05);
         }}
         </style>
@@ -369,7 +378,7 @@ else:
           <div class="glass-card">
             <div class="glass-title">DXC's WWTW Registration Portal</div>
             <div class="glass-subtitle">Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.</div>
-            <a href="{auth_url}" class="login-btn">Continue with Microsoft</a>
+            <a href="{auth_url}" class="login-btn">Login</a>
           </div>
         </div>
         """,
