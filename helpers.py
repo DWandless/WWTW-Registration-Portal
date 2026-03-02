@@ -320,7 +320,6 @@ def export_excel(client):
 #     return buffer
 
 
-
 def export_volunteers_excel(client):
     volunteers = (
         client.table("volunteers")
@@ -330,7 +329,7 @@ def export_volunteers_excel(client):
         or []
     )
 
-    # Full list of areas from the volunteer form
+    # Full list of areas from volunteer form (same as 9_Volunteers.py)
     AREA_OPTIONS = [
         "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
         "Pre-Event Organisation",
@@ -340,57 +339,49 @@ def export_volunteers_excel(client):
     ]
 
     wb = Workbook()
-    ws = wb.active
-    ws.title = "Volunteers"
 
-    # Build headers dynamically
-    HEADERS = [
-        "Full Name",
-        "Email",
-        "Employee ID",
-        "Mobile Number",
-    ] + AREA_OPTIONS
+    # --- Build one worksheet per area -------------------------------------
+    for area in AREA_OPTIONS:
+        ws = wb.create_sheet(title=area[:31])  # Excel limit = 31 chars
 
-    ws.append(HEADERS)
-    _style_worksheet(ws)
-
-    # Sort volunteers (active first, then name)
-    sorted_volunteers = sorted(
-        volunteers,
-        key=lambda v: (
-            bool(v.get("on_waiting_list", False)),  # False (active) first
-            v.get("full_name", "").lower(),
-        ),
-    )
-
-    for v in sorted_volunteers:
-        # Convert stored CSV string into a list
-        selected_areas = [
-            a.strip()
-            for a in (v.get("area") or "").split(",")
-            if a.strip()
+        HEADERS = [
+            "Full Name",
+            "Email",
+            "Employee ID",
+            "Mobile Number",
         ]
+        ws.append(HEADERS)
+        _style_worksheet(ws)
 
-        row = [
-            v.get("full_name", ""),
-            v.get("employee_email", ""),
-            v.get("employee_id", ""),
-            v.get("mobile_number", ""),
-        ]
+        # Filter volunteers who selected this area
+        for v in volunteers:
+            area_list = [
+                a.strip()
+                for a in (v.get("area") or "").split(",")
+                if a.strip()
+            ]
 
-        # Add True/False for each area
-        for area in AREA_OPTIONS:
-            row.append(area in selected_areas)
+            if area in area_list:
+                ws.append([
+                    v.get("full_name", ""),
+                    v.get("employee_email", ""),
+                    v.get("employee_id", ""),
+                    v.get("mobile_number", ""),
+                ])
 
-        ws.append(row)
+        _style_worksheet(ws)
+        ws.freeze_panes = "A2"
 
-    _style_worksheet(ws)
-    ws.freeze_panes = "A2"
+    # Remove the default first empty sheet openpyxl creates
+    if "Sheet" in wb.sheetnames:
+        std = wb["Sheet"]
+        wb.remove(std)
 
     buffer = BytesIO()
     wb.save(buffer)
     buffer.seek(0)
     return buffer
+
 
 
 # -------------------------------------------------------------------
