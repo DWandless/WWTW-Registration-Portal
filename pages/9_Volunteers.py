@@ -193,12 +193,6 @@ try:
 except Exception:
     pass
 
-# Check if event is full
-current_count = get_active_member_count(client)
-event_is_full = current_count >= 20
-
-if event_is_full:
-    st.warning("⚠︎ We have reached our maximum number of volunteers. We will save your data to a waiting list in case a space becomes available.")
 
 # -------------------------------------------------------------------
 # Form UI
