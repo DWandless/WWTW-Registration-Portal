@@ -157,7 +157,7 @@ if token and "id_token" in token:
             st.switch_page("pages/1_Personal.py")
     
     with col2:
-        st.markdown("#### Sign up as a Volunteer")
+        st.markdown("#### 𖹭 Sign up as a Volunteer")
         st.write("Volunteer to help out at the event.")
         if st.button("Volunteer Registration"):
             st.session_state["SessionID"] = str(uuid4())
