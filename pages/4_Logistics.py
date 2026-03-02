@@ -113,7 +113,7 @@ with st.form("logistics_form", clear_on_submit=False):
     else:
         with st.expander("Additional Info (optional)"):
             st.text_area("Notes", key="notes", value=defaults["notes"])
-            st.text_area("Experience", key="experience", value=defaults["experience"])
+            st.text_area("Hiking Experience", key="experience", value=defaults["experience"])
 
     submitted = st.form_submit_button("Save & Next →")
 
