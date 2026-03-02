@@ -1,6 +1,7 @@
 from pathlib import Path
 import streamlit as st
 import pandas as pd
+import base64
 from PIL import Image
 from io import BytesIO
 from openpyxl import Workbook
@@ -22,6 +23,41 @@ ASSETS_DIR = BASE_DIR / "assets"
 
 LOGO_PATH = ASSETS_DIR / "logo.png"
 ICON_PATH = ASSETS_DIR / "page_icon.png"
+HEADER_FONT_PATH = ASSETS_DIR / "GT-Standard-L-Extended-Medium.otf"
+
+
+def apply_header_font():
+    if not HEADER_FONT_PATH.exists():
+        return
+
+    try:
+        font_b64 = base64.b64encode(HEADER_FONT_PATH.read_bytes()).decode("utf-8")
+    except Exception:
+        return
+
+    st.markdown(
+        f"""
+        <style>
+        @font-face {{
+            font-family: 'GTStandardHeader';
+            src: url(data:font/otf;base64,{font_b64}) format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }}
+
+        h1, h2, h3, h4, h5, h6,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4,
+        [data-testid="stMarkdownContainer"] h5,
+        [data-testid="stMarkdownContainer"] h6 {{
+            font-family: 'GTStandardHeader', sans-serif !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # -------------------------------------------------------------------
@@ -33,6 +69,7 @@ def init_page(page_title: str, layout: str = "wide", logo_link: str = "https://d
         page_icon=Image.open(ICON_PATH),
         layout=layout
     )
+    apply_header_font()
     st.logo(
         Image.open(LOGO_PATH),
         link=logo_link,
