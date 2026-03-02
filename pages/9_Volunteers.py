@@ -180,7 +180,7 @@ with st.form("personal_form"):
     employee_id = st.text_input("Employee ID *", value=defaults["employee_id"])
     mobile_number = st.text_input("Mobile (optional)", value=defaults["mobile_number"])
 
-    area = st.selectbox(
+    area = st.multiselect(
         "Volunteer Area *",
         AREA_OPTIONS,
         index=AREA_OPTIONS.index(defaults["area"]) if defaults["area"] else 0,
