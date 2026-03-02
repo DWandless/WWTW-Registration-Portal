@@ -264,9 +264,62 @@ def export_excel(client):
     buffer.seek(0)
     return buffer
 
-# -------------------------------------------------------------------
-# Volunteers Excel Export
-# -------------------------------------------------------------------
+# # -------------------------------------------------------------------
+# # Volunteers Excel Export
+# # -------------------------------------------------------------------
+
+# def export_volunteers_excel(client):
+#     volunteers = (
+#         client.table("volunteers")
+#         .select("*")
+#         .execute()
+#         .data
+#         or []
+#     )
+
+#     wb = Workbook()
+#     ws = wb.active
+#     ws.title = "Volunteers"
+
+#     HEADERS = [
+#         "Full Name",
+#         "Email",
+#         "Employee ID",
+#         "Mobile Number",
+#         "Volunteer Area",
+#     ]
+
+#     ws.append(HEADERS)
+#     _style_worksheet(ws)
+
+#     # Optional: sort volunteers (active first, then name)
+#     sorted_volunteers = sorted(
+#         volunteers,
+#         key=lambda v: (
+#             bool(v.get("on_waiting_list", False)),  # False (active) first
+#             v.get("full_name", "").lower(),
+#         )
+#     )
+
+#     for v in sorted_volunteers:
+#         ws.append([
+#             v.get("full_name", ""),
+#             v.get("employee_email", ""),
+#             v.get("employee_id", ""),
+#             v.get("mobile_number", ""),
+#             v.get("area", ""),
+            
+#         ])
+
+#     _style_worksheet(ws)
+#     ws.freeze_panes = "A2"
+
+#     buffer = BytesIO()
+#     wb.save(buffer)
+#     buffer.seek(0)
+#     return buffer
+
+
 
 def export_volunteers_excel(client):
     volunteers = (
@@ -277,39 +330,59 @@ def export_volunteers_excel(client):
         or []
     )
 
+    # Full list of areas from the volunteer form
+    AREA_OPTIONS = [
+        "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
+        "Pre-Event Organisation",
+        "Merchandise Support (Source, Design, and Order)",
+        "Setting up the DXC tent and Merch distrubition",
+        "Participant support on the day",
+    ]
+
     wb = Workbook()
     ws = wb.active
     ws.title = "Volunteers"
 
+    # Build headers dynamically
     HEADERS = [
         "Full Name",
         "Email",
         "Employee ID",
         "Mobile Number",
-        "Volunteer Area",
-    ]
+    ] + AREA_OPTIONS
 
     ws.append(HEADERS)
     _style_worksheet(ws)
 
-    # Optional: sort volunteers (active first, then name)
+    # Sort volunteers (active first, then name)
     sorted_volunteers = sorted(
         volunteers,
         key=lambda v: (
             bool(v.get("on_waiting_list", False)),  # False (active) first
             v.get("full_name", "").lower(),
-        )
+        ),
     )
 
     for v in sorted_volunteers:
-        ws.append([
+        # Convert stored CSV string into a list
+        selected_areas = [
+            a.strip()
+            for a in (v.get("area") or "").split(",")
+            if a.strip()
+        ]
+
+        row = [
             v.get("full_name", ""),
             v.get("employee_email", ""),
             v.get("employee_id", ""),
             v.get("mobile_number", ""),
-            v.get("area", ""),
-            
-        ])
+        ]
+
+        # Add True/False for each area
+        for area in AREA_OPTIONS:
+            row.append(area in selected_areas)
+
+        ws.append(row)
 
     _style_worksheet(ws)
     ws.freeze_panes = "A2"
