@@ -207,7 +207,7 @@ with st.form("personal_form"):
 
     area = st.multiselect(
         "Volunteer Area *",
-        AREA_OPTIONS,
+        available_area_options,
         default = defaults["area"],
     )
 
