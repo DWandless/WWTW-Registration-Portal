@@ -1,13 +1,3 @@
 [theme]
 primaryColor = "#6399F0"
 backgroundColor = "black"
-
-[browser]
-gatherUsageStats = false
-
-[client]
-showErrorDetails = "viewer"
-toolbarMode = false
-
-[server]
-maxUploadSize = 200
