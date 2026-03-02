@@ -271,6 +271,11 @@ else:
     st.markdown(
         f"""
         <style>
+        html, body {{
+            height: 100%;
+            overflow: hidden;
+        }}
+
         .stApp {{
             background-image:
                 linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
@@ -278,6 +283,8 @@ else:
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            height: 100vh;
+            overflow: hidden;
         }}
 
         .login-wrap {{
