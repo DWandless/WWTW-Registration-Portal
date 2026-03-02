@@ -7,7 +7,7 @@ from authlib.integrations.requests_client import OAuth2Session
 import jwt
 import base64
 from pathlib import Path
-from helpers import hide_sidebar, remove_st_branding, apply_header_font
+from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo
 
 # ---------------------------------------------
 # Icon loading
@@ -141,7 +141,7 @@ if token and "id_token" in token:
     # ---- Session bootstrap ----
     st.session_state.setdefault("SessionID", str(uuid4()))
 
-    st.image(ICON_PATH, width=180)
+    render_logo()
 
     st.title("Register for the Cumbrian Challenge with DXC Technology")
     st.write("---")

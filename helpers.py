@@ -61,6 +61,15 @@ def apply_header_font():
     )
 
 
+def render_logo(logo_link: str = "https://dxc.com/uk/en"):
+    st.logo(
+        Image.open(LOGO_PATH),
+        link=logo_link,
+        icon_image=Image.open(ICON_PATH),
+        size="large"
+    )
+
+
 # -------------------------------------------------------------------
 # Page Setup
 # -------------------------------------------------------------------
@@ -71,13 +80,6 @@ def init_page(page_title: str, layout: str = "wide", logo_link: str = "https://d
         layout=layout
     )
     apply_header_font()
-    st.logo(
-        Image.open(LOGO_PATH),
-        link=logo_link,
-        icon_image=Image.open(ICON_PATH),
-        size="large"
-    )
-    st.image(ICON_PATH, width=180)
     st.title(page_title)
 
 # -------------------------------------------------------------------
