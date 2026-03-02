@@ -1,5 +1,19 @@
 [theme]
 primaryColor = "#6399F0"
 
+[runner]
+fastReruns = true
+
+[browser]
+gatherUsageStats = false
+
 [client]
-toolbarMode = "auto"
+showErrorDetails = "viewer"
+toolbarMode = false
+showSidebarNavigation = false
+
+[server]
+headless = true
+maxUploadSize = 200
+enableXsrfProtection = true
+enableCORS = false
