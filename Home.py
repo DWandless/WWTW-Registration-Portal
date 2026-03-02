@@ -29,6 +29,19 @@ apply_header_font()
 st.markdown(
     """
     <style>
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+    .stApp {
+        height: 100vh;
+        overflow: hidden;
+    }
+    [data-testid="stAppViewContainer"] {
+        height: 100vh;
+        overflow: hidden;
+    }
+
     div.stButton > button[data-testid="baseButton-primary"],
     div.stButton > button[kind="primary"] {
         background-color: #6399F0 !important;
