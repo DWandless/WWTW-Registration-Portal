@@ -9,7 +9,7 @@ fastReruns = true
  
 [client]
 showErrorDetails = false
-toolbarMode = false
+toolbarMode = "minimal"
 showSidebarNavigation = false
  
 [server]
