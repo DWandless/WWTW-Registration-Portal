@@ -205,15 +205,15 @@ if token and "id_token" in token:
     col3, col4, col5, col6 = st.columns(4)
 
     with col3:
-        st.markdown("#### View Details")
-        st.write("View your current team & registration details.")
+        st.markdown("#### Already Registered")
+        st.write("View your current team and registration details.")
         if st.button("View Details", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
     with col4:
         st.markdown("#### Admin Panel")
-        st.write("Administration functions & manage registrations.")
+        st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/7_Admin.py")
@@ -348,12 +348,10 @@ else:
             background: rgba(255, 255, 255, 0.85);
             color: black;
             border-radius: 14px;
+            text-decoration: none;
             font-weight: 600;
             font-size: 1.05rem;
             transition: all 0.25s ease;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
         }}
 
         .login-btn:visited,
@@ -361,7 +359,6 @@ else:
         .login-btn:focus {{
             color: black;
             text-decoration: none;
-            outline: none;
         }}
 
         .login-btn:hover {{
@@ -381,7 +378,7 @@ else:
           <div class="glass-card">
             <div class="glass-title">DXC's WWTW Registration Portal</div>
             <div class="glass-subtitle">Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.</div>
-            <a class="login-btn" href="{auth_url}" role="button">Login</a>
+            <a href="{auth_url}" class="login-btn">Login</a>
           </div>
         </div>
         """,
