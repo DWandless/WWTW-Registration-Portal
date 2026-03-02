@@ -1,17 +1,17 @@
 [theme]
 primaryColor = "#6399F0"
-
-[runner]
-fastReruns = true
-
+ 
 [browser]
 gatherUsageStats = false
-
+ 
+[runner]
+fastReruns = true
+ 
 [client]
-showErrorDetails = "viewer"
-toolbarMode = false
+showErrorDetails = false
+toolbarMode = "minimal"
 showSidebarNavigation = false
-
+ 
 [server]
 headless = true
 maxUploadSize = 200
