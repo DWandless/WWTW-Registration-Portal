@@ -129,7 +129,26 @@ AREA_OPTIONS = ["Communications and Marketing (including Getting our Walkers Cha
                 "Setting up the DXC tent and Merch distrubition",
                 "Participant support on the day"]
 
+LIMITED_AREA = "Participant support on the day"
+LIMITED_AREA_LIMIT = 20
+
 client = get_authenticated_supabase()
+
+limit_area_count = 0
+
+try:
+    res = (
+        client.table("volunteers")
+        .select("id", count="exact")
+        .ilike("area", f"%{LIMITED_AREA}%")
+        .execute()
+    )
+    limit_area_count = res.count or 0
+except Exception:
+    pass
+
+
+
 
 defaults = {
     "full_name": draft.get("full_name") or user_name,
@@ -142,6 +161,18 @@ defaults = {
 if not isinstance(defaults["area"], list):
     defaults["area"] = []
 
+available_area_options = AREA_OPTIONS.copy()
+
+participant_support_is_full = limit_area_count >= LIMITED_AREA_LIMIT
+
+if (
+    participant_support_is_full
+    and LIMITED_AREA not in defaults["area"]
+):
+    available_area_options.remove(LIMITED_AREA)
+
+if participant_support_is_full:
+    st.info("Availability for 'Participant support on the day' is currently full.")
 
 
 # Check if user already exists
