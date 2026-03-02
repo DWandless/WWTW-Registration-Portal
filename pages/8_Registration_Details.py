@@ -63,17 +63,31 @@ st.session_state["user_name"] = user_name
 # -----------------------------------------------------
 client = get_authenticated_supabase()
 
-current_user = (
+_current_user_rows = (
     client
     .table("members")
     .select("id, team_id, role")
     .eq("employee_email", user_email)
-    .single()
+    .limit(1)
     .execute()
     .data
+    or []
 )
 
-if not current_user or not current_user.get("team_id"):
+current_user = _current_user_rows[0] if _current_user_rows else None
+
+if not current_user:
+    st.write("---")
+    st.warning("No registration was found for your account. Please register first to view your team and member details.")
+    st.write("---")
+    if st.button("Register Now"):
+        st.session_state["SessionID"] = str(uuid4())
+        st.switch_page("pages/1_Personal.py")
+
+    back_button("Home.py")
+    st.stop()
+
+if not current_user.get("team_id"):
     st.write("---")
     st.warning("You are not currently assigned to a team.")
     st.write("---")
@@ -90,15 +104,18 @@ team_id = current_user["team_id"]
 # -----------------------------------------------------
 # 4) Load team + members
 # -----------------------------------------------------
-team = (
+_team_rows = (
     client
     .table("teams")
     .select("id, team_name, route")
     .eq("id", team_id)
-    .single()
+    .limit(1)
     .execute()
     .data
+    or []
 )
+
+team = _team_rows[0] if _team_rows else None
 
 if not team:
     st.error("Your team could not be found.")
