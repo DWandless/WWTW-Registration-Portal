@@ -186,14 +186,14 @@ if token and "id_token" in token:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### ➜ Register Here")
+        st.markdown("#### Register Here")
         st.write("Start your registration to join a team and prepare for the event.")
         if st.button("Start New Registration", type="primary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/1_Personal.py")
     
     with col2:
-        st.markdown("#### 𖹭 Sign up as a Volunteer")
+        st.markdown("#### Sign Up To Volunteer")
         st.write("Volunteer to help out at the event.")
         if st.button("Volunteer Registration", type="primary"):
             st.session_state["SessionID"] = str(uuid4())
@@ -205,26 +205,26 @@ if token and "id_token" in token:
     col3, col4, col5, col6 = st.columns(4)
 
     with col3:
-        st.markdown("#### ↪ Already Registered")
+        st.markdown("#### Already Registered")
         st.write("View your current team and registration details.")
         if st.button("View Details", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
     with col4:
-        st.markdown("#### 🛠 Admin Panel")
+        st.markdown("#### Admin Panel")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/7_Admin.py")
 
     with col5:
-        st.markdown("#### ⓘ Learn More")
+        st.markdown("#### Learn More")
         st.write("Learn more about the Cumbrian Challenge")
         st.link_button("Learn More", "https://walkingwiththewounded.org.uk/", type="secondary")
     
     with col6:
-        st.markdown("#### ➜] Logout")
+        st.markdown("#### Logout")
         st.write("Click below to securely log out of the portal.")
         if st.button("Logout", type="secondary"):
             # 1) Clear app-side state & caches
@@ -285,6 +285,24 @@ else:
             background-repeat: no-repeat;
             height: 100vh;
             overflow: hidden;
+        }}
+
+        [data-testid="stAppViewContainer"],
+        [data-testid="stMain"],
+        section.main,
+        .main,
+        .block-container {{
+            height: 100vh;
+            overflow: hidden !important;
+        }}
+
+        * {{
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }}
+        *::-webkit-scrollbar {{
+            width: 0 !important;
+            height: 0 !important;
         }}
 
         .login-wrap {{
