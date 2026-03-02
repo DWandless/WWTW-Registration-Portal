@@ -135,6 +135,7 @@ defaults = {
     "full_name": draft.get("full_name") or user_name,
     "employee_email": draft.get("employee_email") or user_email,
     "employee_id": draft.get("employee_id") or "",
+    "area": draft.get("area") or None,
     "mobile_number": draft.get("mobile_number") or "",
 }
 
