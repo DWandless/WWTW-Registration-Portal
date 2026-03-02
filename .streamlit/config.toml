@@ -5,9 +5,6 @@ backgroundColor = "black"
 [browser]
 gatherUsageStats = false
 
-[runner]
-fastReruns = true
-
 [client]
 showErrorDetails = "viewer"
 toolbarMode = false
