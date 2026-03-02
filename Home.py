@@ -173,11 +173,7 @@ if token and "id_token" in token:
     By signing up through DXC, you’re helping transform lives and make a real difference.  
     **Thank you for being part of this incredible cause!**
     """)
-
-    st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
-
-    st.divider()
-
+    
     # ---- Split Layout: New vs Existing ----
     col1, col2 = st.columns(2)
 
@@ -198,7 +194,7 @@ if token and "id_token" in token:
     st.divider()
     
     # ---- Split Layout: New vs Existing ----
-    col3, col4, col5 = st.columns(3)
+    col3, col4, col5, col6 = st.columns(4)
 
     with col3:
         st.markdown("#### ↪ Already Registered")
@@ -215,6 +211,11 @@ if token and "id_token" in token:
             st.switch_page("pages/7_Admin.py")
 
     with col5:
+        st.markdown("#### Learn More")
+        st.write("Learn more about the Cumbrian Challenge")
+        st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
+    
+    with col6:
         st.markdown("#### ➜] Logout")
         st.write("Click below to securely log out of the portal.")
         if st.button("Logout"):
