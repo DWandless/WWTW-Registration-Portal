@@ -70,7 +70,7 @@ defaults = {
     "taking_car": draft.get("taking_car", False),
     "travelling_from": draft.get("travelling_from", ""),
     "notes": draft.get("notes", ""),
-    "Hiking experience": draft.get("hiking_experience", ""),
+    "experience": draft.get("hiking_experience", ""),
 }
 
 
