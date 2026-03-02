@@ -195,7 +195,7 @@ with st.form("personal_form"):
 # -------------------------------------------------------------------
 
 if submitted:
-    is_valid, error_msg = validate_form(full_name, employee_email, employee_id, mobile_number)
+    is_valid, error_msg = validate_form(full_name, employee_email, employee_id, mobile_number, area)
     if not is_valid:
         st.error(error_msg)
         st.stop()
@@ -205,13 +205,14 @@ if submitted:
     email_clean = sanitize_text(employee_email).lower()
     employee_id_clean = sanitize_text(employee_id)
     mobile_clean = sanitize_text(mobile_number)
+    area_clean = sanitize_text(area)
 
     draft.update({
         "full_name": full_name_clean,
         "employee_email": email_clean,
         "employee_id": employee_id_clean,
         "mobile_number": mobile_clean or None,
-        "area": area,
+        "area": area_clean,
     })
     st.session_state["draft"] = draft
 
