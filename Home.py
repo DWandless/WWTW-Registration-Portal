@@ -173,7 +173,7 @@ if token and "id_token" in token:
     By signing up through DXC, you’re helping transform lives and make a real difference.  
     **Thank you for being part of this incredible cause!**
     """)
-    
+
     # ---- Split Layout: New vs Existing ----
     col1, col2 = st.columns(2)
 
@@ -211,9 +211,9 @@ if token and "id_token" in token:
             st.switch_page("pages/7_Admin.py")
 
     with col5:
-        st.markdown("#### Learn More")
+        st.markdown("#### 🛈︎ Learn More")
         st.write("Learn more about the Cumbrian Challenge")
-        st.link_button("Learn more about Walking With The Wounded", "https://walkingwiththewounded.org.uk/", type="primary")
+        st.link_button("Learn More", "https://walkingwiththewounded.org.uk/", type="primary")
     
     with col6:
         st.markdown("#### ➜] Logout")
