@@ -1,2 +1,18 @@
 [theme]
 primaryColor = "#6399F0"
+backgroundColor = "black"
+
+[browser]
+gatherUsageStats = false
+
+[runner]
+fastReruns = true
+
+[client]
+showErrorDetails = "viewer"
+toolbarMode = false
+showSidebarNavigation = false
+
+[server]
+headless = true
+maxUploadSize = 200
