@@ -80,6 +80,7 @@ def init_page(page_title: str, layout: str = "wide", logo_link: str = "https://d
         layout=layout
     )
     apply_header_font()
+    render_logo(logo_link=logo_link)
     st.title(page_title)
 
 # -------------------------------------------------------------------
