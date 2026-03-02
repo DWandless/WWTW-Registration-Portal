@@ -10,5 +10,4 @@ showErrorDetails = "viewer"
 toolbarMode = false
 
 [server]
-headless = true
 maxUploadSize = 200
