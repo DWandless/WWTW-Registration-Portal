@@ -205,15 +205,15 @@ if token and "id_token" in token:
     col3, col4, col5, col6 = st.columns(4)
 
     with col3:
-        st.markdown("#### Already Registered")
-        st.write("View your current team and registration details.")
+        st.markdown("#### View Details")
+        st.write("View your current team & registration details.")
         if st.button("View Details", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
     with col4:
         st.markdown("#### Admin Panel")
-        st.write("Access administrative functions and manage registrations.")
+        st.write("Administration functions & manage registrations.")
         if st.button("Admin Panel", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/7_Admin.py")
