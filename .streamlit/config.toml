@@ -11,7 +11,6 @@ fastReruns = true
 [client]
 showErrorDetails = "viewer"
 toolbarMode = false
-showSidebarNavigation = false
 
 [server]
 headless = true
