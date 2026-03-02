@@ -25,6 +25,38 @@ st.set_page_config(page_icon= ICON_PATH, layout="wide")
 remove_st_branding()
 hide_sidebar()
 
+st.markdown(
+    """
+    <style>
+    div.stButton > button {
+        background-color: #6399F0 !important;
+        color: white !important;
+        border: 1px solid #6399F0 !important;
+    }
+    div.stButton > button:hover {
+        background-color: #4D86EE !important;
+        color: white !important;
+        border: 1px solid #4D86EE !important;
+    }
+    div.stButton > button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(99, 153, 240, 0.35) !important;
+    }
+
+    [data-testid="stLinkButton"] a {
+        background-color: #6399F0 !important;
+        color: white !important;
+        border: 1px solid #6399F0 !important;
+    }
+    [data-testid="stLinkButton"] a:hover {
+        background-color: #4D86EE !important;
+        color: white !important;
+        border: 1px solid #4D86EE !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Azure Credentials
 azure = st.secrets["azure"]
 CLIENT_ID = azure["client_id"]
@@ -250,8 +282,8 @@ else:
             display: inline-block;
             margin-top: 1.5rem;
             padding: 12px 28px;
-            background: rgba(255, 255, 255, 0.85);
-            color: black;
+            background: #6399F0;
+            color: white;
             border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
@@ -259,7 +291,7 @@ else:
         }}
 
         .login-btn:hover {{
-            background: rgba(0, 123, 255, 1);
+            background: #4D86EE;
             transform: scale(1.05);
         }}
         </style>
@@ -267,7 +299,7 @@ else:
         unsafe_allow_html=True
     )
 
-    # ✅ Vertical center wrapper
+    # Vertical center wrapper
     st.markdown(
         "<div style='display:flex; justify-content:center;'>",
         unsafe_allow_html=True
