@@ -226,6 +226,61 @@ def export_excel(client):
     buffer.seek(0)
     return buffer
 
+# -------------------------------------------------------------------
+# Volunteers Excel Export
+# -------------------------------------------------------------------
+
+def export_volunteers_excel(client):
+    volunteers = (
+        client.table("volunteers")
+        .select("*")
+        .execute()
+        .data
+        or []
+    )
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Volunteers"
+
+    HEADERS = [
+        "Full Name",
+        "Email",
+        "Employee ID",
+        "Mobile Number",
+        "Volunteer Area",
+    ]
+
+    ws.append(HEADERS)
+    _style_worksheet(ws)
+
+    # Optional: sort volunteers (active first, then name)
+    sorted_volunteers = sorted(
+        volunteers,
+        key=lambda v: (
+            bool(v.get("on_waiting_list", False)),  # False (active) first
+            v.get("full_name", "").lower(),
+        )
+    )
+
+    for v in sorted_volunteers:
+        ws.append([
+            v.get("full_name", ""),
+            v.get("employee_email", ""),
+            v.get("employee_id", ""),
+            v.get("mobile_number", ""),
+            v.get("area", ""),
+            
+        ])
+
+    _style_worksheet(ws)
+    ws.freeze_panes = "A2"
+
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer
+
 
 # -------------------------------------------------------------------
 # Update Members (called after data_editor editing)

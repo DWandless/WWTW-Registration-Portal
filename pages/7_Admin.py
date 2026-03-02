@@ -13,7 +13,8 @@ from helpers import (
     delete_member,
     hide_sidebar,
     back_button,
-    remove_st_branding
+    remove_st_branding,
+    export_volunteers_excel
 )
 
 # -----------------------------------------------------
@@ -330,6 +331,7 @@ for team in teams_data:
 # EXPORT BUTTON
 # -----------------------------------------------------
 excel_file = export_excel(client)
+volunteers_excel = export_volunteers_excel(client)
 
 st.markdown("---")
 st.subheader("Export Data")
@@ -339,6 +341,13 @@ st.download_button(
     label="Export & Download Teams.xlsx",
     data=excel_file.getvalue(),
     file_name="teams.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+)
+
+st.download_button(
+    label="Export & Download Volunteers.xlsx",
+    data=volunteers_excel.getvalue(),
+    file_name="volunteers.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 )
 
