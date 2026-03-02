@@ -372,18 +372,31 @@ else:
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        f"""
-        <div class="login-wrap">
-          <div class="glass-card">
-            <div class="glass-title">DXC's WWTW Registration Portal</div>
-            <div class="glass-subtitle">Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.</div>
-            <a href="{auth_url}" class="login-btn" target="_self">Login</a>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    # st.markdown(
+    #     f"""
+    #     <div class="login-wrap">
+    #       <div class="glass-card">
+    #         <div class="glass-title">DXC's WWTW Registration Portal</div>
+    #         <div class="glass-subtitle">Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.</div>
+    #         <a href="{auth_url}" class="login-btn">Login</a>
+    #       </div>
+    #     </div>
+    #     """,
+    #     unsafe_allow_html=True,
+    # )
     
 
-
+st.markdown(
+    f"""
+    <div class="login-wrap">
+      <div class="glass-card">
+        <div class="glass-title">DXC's WWTW Registration Portal</div>
+        <div class="glass-subtitle">
+            Sign in with your Microsoft account to register for the Cumbrian Challenge, manage your team, or volunteer.
+        </div>
+        <a href="{auth_url}" class="login-btn" target="_self">Login</a>
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
