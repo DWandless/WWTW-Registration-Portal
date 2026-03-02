@@ -282,8 +282,8 @@ else:
             display: inline-block;
             margin-top: 1.5rem;
             padding: 12px 28px;
-            background: #6399F0;
-            color: white;
+            background: rgba(255, 255, 255, 0.85);
+            color: black;
             border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
@@ -291,7 +291,7 @@ else:
         }}
 
         .login-btn:hover {{
-            background: #4D86EE;
+            background: rgba(0, 123, 255, 1);
             transform: scale(1.05);
         }}
         </style>
