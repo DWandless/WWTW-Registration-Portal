@@ -35,7 +35,7 @@ TENANT_ID = azure.get("tenant_id", "common")
 AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
 AUTHORIZE_URL = f"{AUTHORITY}/oauth2/authorize"
 TOKEN_URL = f"{AUTHORITY}/oauth2/token"
-REDIRECT_URI = "https://wwtw-registration.streamlit.app/"
+REDIRECT_URI = "http://localhost:8501"
 
 oauth = OAuth2Session(
     client_id=CLIENT_ID,
@@ -147,7 +147,7 @@ if token and "id_token" in token:
         return "pages/1_Form.py"
 
     # ---- Split Layout: New vs Existing ----
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
         st.markdown("#### ➜ Register Here")
@@ -155,15 +155,22 @@ if token and "id_token" in token:
         if st.button("Start New Registration"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/1_Personal.py")
-
+    
     with col2:
+        st.markdown("#### Sign up as a Volunteer")
+        st.write("Volunteer to help out at the event.")
+        if st.button("Volunteer Registration"):
+            st.session_state["SessionID"] = str(uuid4())
+            st.switch_page("pages/9_Volunteers.py")
+
+    with col3:
         st.markdown("#### ↪ Already Registered")
         st.write("View your current team and registration details.")
         if st.button("View Registration Details"):
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/8_Registration_Details.py")
     
-    with col3:
+    with col4:
         st.markdown("#### 🛠 Admin Panel")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel"):
@@ -171,8 +178,8 @@ if token and "id_token" in token:
             st.switch_page("pages/7_Admin.py")
 
 
-    with col4:
-        st.markdown("#### ➜] Log out")
+    with col5:
+        st.markdown("#### ➜] Logout")
         st.write("Click below to securely log out of the portal.")
         if st.button("Logout"):
             # 1) Clear app-side state & caches

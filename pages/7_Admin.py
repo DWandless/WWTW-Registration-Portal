@@ -230,13 +230,43 @@ dropdowns = {
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
 }
 
+# -----------------------------------------------------
+# Volunteers
+# -----------------------------------------------------
+volunteers = client.table("volunteers").select('*').eq("on_waiting_list", False).execute().data or []
+st.markdown("---")
+st.subheader("Volunteers")
+st.caption("Manage volunteers who have signed up to assist with the event.")
+
+with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
+    if volunteers:
+        df_vol = pd.DataFrame(volunteers)
+        st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+    else:
+        st.info("No volunteers have signed up yet.")
 
 # -----------------------------------------------------
-# Waiting List
+# Volunteer Waiting List
+# -----------------------------------------------------
+volunteers = client.table("volunteers").select('*').eq("on_waiting_list", True).execute().data or []
+st.markdown("---")
+st.subheader("Volunteer Waiting List")
+st.caption("Manage volunteers who have registered interest in volunteering and are on the waiting list.")
+
+with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
+    if volunteers:
+        df_vol = pd.DataFrame(volunteers)
+        st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+    else:
+        st.info("No volunteers on the waiting list.")
+
+
+# -----------------------------------------------------
+# Particpant Waiting List
 # -----------------------------------------------------
 waiting_members = client.table("members").select("*").eq("on_waiting_list", True).execute().data or []
 st.markdown("---")
-st.subheader("Waiting List")
+st.subheader("Participant Waiting List")
 st.caption("Members added here when the event reaches capacity (200+ active participants). Manage these members below—edit their details or uncheck 'On Waiting List' to move them to active status. Delete members if needed.")
 
 with st.expander(f"Waiting List ({len(waiting_members)})", expanded=False):

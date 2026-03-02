@@ -103,12 +103,13 @@ st.subheader("Participation Agreement")
 st.markdown("""
 To participate you must agree to:
 
+- By signing up as a participant, you will not be able to sign up as a volunteer, so please only sign up for the role that best suits you.
 - Participation is at your own risk  
 - Attendance at DXC briefings prior to event  
 - Mandatory safety briefings at campsite  
 - DXC is not responsible for loss/damage of items  
 - Choose a route within your ability  
-- Raise a minimum of **£150** in sponsorship  
+- Raise an individual minimum of **£150**, or a team minimum of **£600** (4 members), or **£750** (5 members) in fundraising  
 """)
 
 agree = st.checkbox("I have read and agree to all the above terms.")
@@ -179,7 +180,7 @@ with st.form("personal_form"):
 
     mobile_number = st.text_input("Mobile (optional)", value=defaults["mobile_number"])
     forces_vet = st.checkbox(
-        "Please tick this box if you are a Forces Veteran",
+        "Please tick this box if you are a Veteran, or Serving Reservist",
         value=defaults["forces_vet"],
     )
 
