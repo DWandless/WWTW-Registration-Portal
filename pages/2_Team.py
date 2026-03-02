@@ -32,6 +32,7 @@ def is_valid_team_name(name: str) -> bool:
     Team name rules:
     - 2–40 chars after sanitization
     - must contain at least one letter or number
+    - must include 'DXC' (case-insensitive)
     """
     if not name:
         return False
@@ -42,6 +43,12 @@ def is_valid_team_name(name: str) -> bool:
     # Must contain at least one alphanumeric character
     if not re.search(r"[A-Za-z0-9]", name):
         return False
+    
+    
+   # Must include 'DXC'
+    if "dxc" not in name.lower():
+        return False
+    
 
     return True
 
@@ -221,7 +228,7 @@ elif choice == "Create a Team":
         new_name = sanitize_team_name(new_name_raw)
 
         if not is_valid_team_name(new_name):
-            st.error("Invalid team name. Use 2–40 letters/numbers, spaces, hyphens, or apostrophes.")
+            st.error("Invalid team name. It must include 'DXC' and use 2–40 letters/numbers, spaces, hyphens, or apostrophes.")
             st.stop()
 
         # Duplicate check
