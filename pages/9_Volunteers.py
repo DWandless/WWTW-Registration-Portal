@@ -256,7 +256,7 @@ if submitted:
 
     else:
         # Event not full OR active user
-        final_record = prepare_member_record(draft, True, client)
+        final_record = prepare_member_record(draft, False, client)
         try:
             res = client.table("volunteers").insert(final_record).execute()
             new_id = res.data[0]["id"]
