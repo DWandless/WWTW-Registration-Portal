@@ -148,6 +148,8 @@ if token and "id_token" in token:
             st.session_state["SessionID"] = str(uuid4())
             st.switch_page("pages/9_Volunteers.py")
 
+    st.markdown("---")
+    
     # ---- Intro Section ----
     st.markdown("""
     ### Join DXC Technology in Supporting Walking With The Wounded
