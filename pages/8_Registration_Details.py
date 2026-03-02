@@ -80,6 +80,7 @@ if not current_user:
     st.write("---")
     st.warning("No registration was found for your account. Please register first to view your team and member details.")
     st.write("---")
+    st.caption("Register using the button below.")
     if st.button("Register Now"):
         st.session_state["SessionID"] = str(uuid4())
         st.switch_page("pages/1_Personal.py")
@@ -89,7 +90,7 @@ if not current_user:
 
 if not current_user.get("team_id"):
     st.write("---")
-    st.warning("You are not currently assigned to a team.")
+    st.warning("You are not currently assigned to a team, update your details and assign yourself to a team or contact an admin.")
     st.write("---")
     st.caption("If you need to update your registration details, please click the button below.")
     if st.button("Update Registration Details"):
