@@ -347,7 +347,7 @@ def prepare_member_record(draft: dict, on_waiting_list: bool | None = None, clie
         "team_id", "preferred_route", "role",
         "shirt_size", "forces_vet", "camping_fri", "camping_sat",
         "taking_car", "travelling_from", "notes", "hiking_experience",
-        "mobile_number", "organisation", "on_waiting_list", "dropped_out"
+        "mobile_number", "organisation", "on_waiting_list", "dropped_out", "area"
     }
 
     record = {}
