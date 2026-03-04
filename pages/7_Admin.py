@@ -466,6 +466,13 @@ st.markdown("---")
 st.subheader("Confirmed Teams & Members")
 st.caption("View and manage all confirmed teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
 
+confirmed_team_count = len(teams_data)
+confirmed_member_count = sum(len(t.get("members") or []) for t in teams_data)
+
+c1, c2 = st.columns(2)
+c1.metric("Confirmed Teams", confirmed_team_count)
+c2.metric("Members Assigned to Confirmed Teams", confirmed_member_count)
+
 for team in teams_data:
     team_members = team.get("members") or []
 
