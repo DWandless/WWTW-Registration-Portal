@@ -230,6 +230,7 @@ dropdowns = {
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
+    "Area": st.column_config.TextColumn("Area"),
 }
 
 # -----------------------------------------------------
@@ -242,8 +243,10 @@ st.caption("Manage volunteers who have signed up to assist with the event.")
 
 with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
     if volunteers:
-        df_vol = pd.DataFrame(volunteers)
-        st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+        # df_vol = pd.DataFrame(volunteers)
+        # st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+        df_vol = members_to_dataframe(volunteers)
+        render_member_editor(df_vol, team_id_to_name, team_name_to_id, client, "Volunteers", dropdowns)
     else:
         st.info("No volunteers have signed up yet.")
 
