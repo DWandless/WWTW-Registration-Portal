@@ -224,7 +224,10 @@ dropdowns = {
     "Team Name": st.column_config.SelectboxColumn("Team Name", options=team_options_with_unassigned),
     # Use the canonical route keys used elsewhere in the app
     "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher"]),
-    "Organisation": st.column_config.SelectboxColumn("Organisation", options=["CSC", "L-ES", "Velonetic"]),
+    "Organisation": st.column_config.SelectboxColumn(
+        "Organisation",
+        options=["L-ES", "L-CSC", "Velonetic", "CSC"],
+    ),
     "Role": st.column_config.SelectboxColumn("Role", options=["Member", "Leader"]),
     "Shirt Size": st.column_config.SelectboxColumn("Shirt Size", options=["XS", "S", "M", "L", "XL", "XXL"]),
     "Forces Veteran": st.column_config.CheckboxColumn("Forces Veteran"),
