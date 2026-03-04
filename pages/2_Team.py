@@ -104,7 +104,11 @@ def count_team_members(client, teams):
     return team_member_counts
 
 def create_team(client, team_name: str, route: str):
-    insert_res = client.table("teams").insert({"team_name": team_name, "route": route}).execute()
+    
+    if team_cap_reached:
+        insert_res = client.table("teams").insert({"team_name": team_name, "route": route, "on_waiting_list": True}).execute()
+    else:
+        insert_res = client.table("teams").insert({"team_name": team_name, "route": route, "on_waiting_list": False}).execute()
     created = insert_res.data[0]
     return {"id": created.get("id"), "team_name": team_name, "route": route}
 
@@ -129,10 +133,9 @@ st.write("---")
 
 options = ["Continue Independently", "Join a Team", "Create a Team"]
 if team_cap_reached:
-    options = ["Continue Independently", "Join a Team"]
     st.warning(
         "The maximum number of teams has been reached. "
-        "Please join an existing team or contact an admin for support."
+        "If you continue to register a new team, it will be added to the waiting list and you will be notified if a spot becomes available. "
     )
 
 choice = st.selectbox(
@@ -230,12 +233,12 @@ elif choice == "Create a Team":
     st.subheader("Create a New Team")
     st.info("If you create a team you will automatically be assigned as the team leader of that team.")
 
-    if team_cap_reached:
-        st.error(
-            "Team creation is currently unavailable because the maximum number of teams (25) has been reached. "
-            "Please join an existing team or contact an admin."
-        )
-        st.stop()
+    # if team_cap_reached:
+    #     st.error(
+    #         "Team creation is currently unavailable because the maximum number of teams (25) has been reached. "
+    #         "Please join an existing team or contact an admin."
+    #     )
+    #     st.stop()
 
     with st.form("create_team_form"):
         new_name_raw = st.text_input("Team Name *")
