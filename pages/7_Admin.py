@@ -231,6 +231,146 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
     st.markdown("---")
 
 
+def teams_to_dataframe(teams):
+    df = pd.DataFrame([
+        {
+            "id": str(t.get("id")),
+            "Team Name": t.get("team_name"),
+            "Route": t.get("route"),
+            "On Waiting List": bool(t.get("on_waiting_list")),
+        }
+        for t in (teams or [])
+    ])
+    return df
+
+
+TEAM_COLUMN_MAP = {
+    "Team Name": "team_name",
+    "Route": "route",
+    "On Waiting List": "on_waiting_list",
+}
+
+
+def apply_team_updates(edited_df, original_df, client):
+    if edited_df is None or edited_df.empty:
+        return 0
+
+    updates = 0
+
+    original_df = original_df.copy()
+    edited_df = edited_df.copy()
+    original_df["id"] = original_df["id"].astype(str)
+    edited_df["id"] = edited_df["id"].astype(str)
+
+    for _, row in edited_df.iterrows():
+        team_id = row["id"]
+        orig_rows = original_df[original_df["id"] == team_id]
+        if orig_rows.empty:
+            continue
+        orig = orig_rows.iloc[0]
+
+        changes = {}
+        for col, new_val in row.items():
+            if col == "id":
+                continue
+
+            old_val = orig[col]
+            db_col = TEAM_COLUMN_MAP.get(col)
+            if not db_col:
+                continue
+
+            if db_col == "on_waiting_list":
+                new_val = bool(new_val)
+                old_val = bool(old_val)
+
+            if new_val != old_val:
+                changes[db_col] = new_val
+
+        if changes:
+            try:
+                client.table("teams").update(changes).eq("id", team_id).execute()
+                updates += 1
+            except Exception as e:
+                st.error(f"Failed to update team {team_id}.")
+                st.exception(e)
+
+    return updates
+
+
+def render_team_editor(df_teams, client, title, dropdowns):
+    if df_teams.empty:
+        st.info(f"No teams to display for {title}.")
+        return
+
+    pending_key = f"pending_delete_{title}"
+    if pending_key in st.session_state and st.session_state[pending_key] is not None:
+        team_id_str = str(st.session_state[pending_key])
+        if not any(df_teams["id"] == team_id_str):
+            st.session_state[pending_key] = None
+            st.session_state.pop(f"delete_select_{title}", None)
+
+    df_ids = df_teams.copy()
+
+    edited = st.data_editor(
+        df_teams.drop(columns=["id"]),
+        width="stretch",
+        num_rows="fixed",
+        hide_index=True,
+        column_config=dropdowns,
+        key=f"editor_{title}",
+    )
+
+    edited["id"] = df_ids["id"]
+
+    applied = apply_team_updates(edited, df_ids, client)
+    if applied > 0:
+        st.success(f"Applied {applied} update(s).")
+        st.rerun()
+
+    team_options = {
+        f"{row['Team Name']} — {row['Route']}": row["id"]
+        for _, row in df_teams.iterrows()
+    }
+
+    st.markdown("**Delete Team:**")
+    cols = st.columns([3, 1])
+
+    with cols[0]:
+        selected = st.selectbox(
+            "Select team to delete",
+            list(team_options.keys()),
+            key=f"delete_select_{title}",
+            label_visibility="collapsed",
+        )
+
+    with cols[1]:
+        if st.button("⌦ Delete", key=f"delete_btn_{title}", use_container_width=True):
+            st.session_state[pending_key] = team_options[selected]
+
+    if st.session_state.get(pending_key):
+        team_id_str = str(st.session_state[pending_key])
+        matching_rows = df_teams[df_teams["id"] == team_id_str]
+        team_name = matching_rows["Team Name"].values[0] if not matching_rows.empty else "Team"
+
+        st.error(f"⚠︎ Delete '{team_name}'? Members will be unassigned.")
+        confirm_cols = st.columns([1, 1, 2])
+
+        with confirm_cols[0]:
+            if st.button("✔ Confirm", key=f"confirm_delete_yes_{title}", use_container_width=True):
+                delete_team(st.session_state[pending_key], client)
+                st.session_state[pending_key] = None
+                st.session_state.pop(f"delete_select_{title}", None)
+                st.rerun()
+
+        with confirm_cols[1]:
+            if st.button("✖ Cancel", key=f"confirm_delete_no_{title}", use_container_width=True):
+                st.session_state[pending_key] = None
+                st.session_state.pop(f"delete_select_{title}", None)
+                st.rerun()
+
+    st.markdown("---")
+
+
 def volunteers_to_dataframe(volunteers):
     df = pd.DataFrame([
         {
@@ -531,10 +671,16 @@ unassigned_teams_data = (
     or []
 )
 
-with st.expander(f"Unassigned Teams ({len(unassigned_teams_data)})", expanded=False):
+team_waiting_dropdowns = {
+    "Team Name": st.column_config.TextColumn("Team Name"),
+    "Route": st.column_config.SelectboxColumn("Route", options=["Peak", "Tough", "Tougher"]),
+    "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
+}
+
+with st.expander(f"Teams on Waiting List ({len(unassigned_teams_data)})", expanded=False):
     if unassigned_teams_data:
-        df_vol = pd.DataFrame(unassigned_teams_data)
-        st.dataframe(df_vol[["team_name", "route", "on_waiting_list"]])
+        df_waiting_teams = teams_to_dataframe(unassigned_teams_data)
+        render_team_editor(df_waiting_teams, client, "WaitingListTeams", team_waiting_dropdowns)
     else:
         st.info("No teams are currently on the waiting list.")
 
