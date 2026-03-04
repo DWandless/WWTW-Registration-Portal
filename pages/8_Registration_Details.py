@@ -7,6 +7,7 @@ from helpers import (
     init_page,
     get_authenticated_supabase,
     members_to_dataframe,
+    sanitize_text,
     hide_sidebar,
     back_button,
     remove_st_branding
@@ -127,7 +128,7 @@ team_members = (
     client
     .table("members")
     .select(
-        "team_id, full_name, employee_email, role, "
+        "id, team_id, full_name, employee_email, role, "
         "shirt_size, camping_fri, camping_sat, "
         "taking_car, travelling_from, on_waiting_list"
     )
@@ -137,6 +138,8 @@ team_members = (
     .data
     or []
 )
+
+is_team_leader = (current_user.get("role") or "").strip().lower() == "leader"
 
 # -----------------------------------------------------
 # 5) Display
@@ -181,11 +184,61 @@ st.dataframe(
     }
 )
 
-st.write("---")
-st.markdown("### Update Your Registration Details")
-st.caption("If you need to update your registration details, please click the button below.")
-if st.button("Update Registration Details"):
-            st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/1_Personal.py")
+# if the currently logged in user is a team leader then they have access to these functions
+if is_team_leader:
+    st.write("---")
+    st.markdown("### Team Management")
+    st.caption("As the team leader, you can rename your team or remove members from it.")
 
+    with st.expander("Rename team", expanded=False):
+        new_team_name = st.text_input("Team name", value=team.get("team_name", ""))
+        rename_disabled = not sanitize_text(new_team_name)
+
+        if st.button("Update Team Name", disabled=rename_disabled):
+            try:
+                cleaned = sanitize_text(new_team_name)
+                client.table("teams").update({"team_name": cleaned}).eq("id", team_id).execute()
+                st.success("Team name updated.")
+                st.rerun()
+            except Exception as e:
+                st.error("Could not update the team name.")
+                st.exception(e)
+
+    with st.expander("Remove a member from the team", expanded=False):
+        removable_members = [
+            m for m in team_members
+            if (m.get("id") is not None)
+            and (str(m.get("employee_email", "")).lower() != user_email)
+            and ((m.get("role") or "").strip().lower() != "leader")
+        ]
+
+        if not removable_members:
+            st.info("There are no team members available to remove.")
+        else:
+            member_labels = [
+                f"{m.get('full_name') or ''} ({m.get('employee_email') or ''})"
+                for m in removable_members
+            ]
+            selected_idx = st.selectbox(
+                "Select a team member to remove",
+                options=list(range(len(removable_members))),
+                format_func=lambda i: member_labels[i],
+            )
+            selected_member = removable_members[selected_idx]
+
+            confirm_remove = st.checkbox(
+                "I understand this will remove the member from the team (it will not delete their registration).",
+                value=False,
+            )
+
+            if st.button("Remove Member", disabled=not confirm_remove):
+                try:
+                    client.table("members").update({"team_id": None}).eq("id", selected_member["id"]).execute()
+                    st.success("Member removed from the team.")
+                    st.rerun()
+                except Exception as e:
+                    st.error("Could not remove the selected member.")
+                    st.exception(e)
+
+st.write("---")
 back_button("Home.py")
