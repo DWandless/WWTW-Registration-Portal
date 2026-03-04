@@ -230,7 +230,16 @@ dropdowns = {
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
+    
+}
+
+volunteer_dropdowns = {
+    "Full Name": st.column_config.TextColumn("Full Name"),
+    "Employee ID": st.column_config.TextColumn("Employee ID"),
+    "DXC Email": st.column_config.TextColumn("DXC Email"),
+    "Mobile Number": st.column_config.TextColumn("Mobile Number"),
     "Area": st.column_config.TextColumn("Area"),
+    "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
 }
 
 # -----------------------------------------------------
@@ -246,7 +255,7 @@ with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
         # df_vol = pd.DataFrame(volunteers)
         # st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
         df_vol = members_to_dataframe(volunteers)
-        render_member_editor(df_vol, team_id_to_name, team_name_to_id, client, "Volunteers", dropdowns)
+        render_member_editor(df_vol, team_id_to_name, team_name_to_id, client, "Volunteers", volunteer_dropdowns)
     else:
         st.info("No volunteers have signed up yet.")
 
