@@ -82,7 +82,6 @@ def load_teams(client):
         team_res = (
             client.table("teams")
             .select("id, team_name, route")
-            .eq("on_waiting_list", False)
             .order("team_name")
             .execute()
         )
