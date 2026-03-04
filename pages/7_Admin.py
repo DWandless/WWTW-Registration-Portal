@@ -1,11 +1,11 @@
 import streamlit as st
-import jwt
 import pandas as pd
 
 from helpers import (
     init_page,
     require_access,
     get_authenticated_supabase,
+    verify_microsoft_id_token,
     members_to_dataframe,
     apply_member_updates,
     export_excel,
@@ -45,7 +45,13 @@ if "id_token" not in token:
 # -----------------------------------------------------
 # 2) Decode Microsoft Token (same as home.py)
 # -----------------------------------------------------
-decoded = jwt.decode(token["id_token"], options={"verify_signature": False})
+try:
+    decoded = verify_microsoft_id_token(token["id_token"])
+except Exception:
+    st.error("✖ Invalid login session. Please sign in again.")
+    back_button("Home.py")
+    st.write("---")
+    st.stop()
 
 raw_name = decoded.get("name", "Unknown User")
 user_email = (

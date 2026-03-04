@@ -2,6 +2,7 @@ from pathlib import Path
 import streamlit as st
 import pandas as pd
 import base64
+import jwt
 from PIL import Image
 from io import BytesIO
 from openpyxl import Workbook
@@ -13,6 +14,7 @@ import math
 import os
 import re
 import unicodedata
+from jwt import PyJWKClient
 
 
 # -------------------------------------------------------------------
@@ -163,6 +165,72 @@ def get_authenticated_supabase():
         st.stop()
 
     return client
+
+
+# -------------------------------------------------------------------
+# Microsoft ID Token Verification (JWKS)
+# -------------------------------------------------------------------
+@st.cache_resource(show_spinner=False)
+def _get_ms_jwk_client(tenant_id: str) -> PyJWKClient:
+    jwks_url = f"https://login.microsoftonline.com/{tenant_id}/discovery/v2.0/keys"
+    return PyJWKClient(jwks_url)
+
+
+def verify_microsoft_id_token(id_token: str) -> dict:
+    """Verify Microsoft ID token signature and core claims.
+
+    Validates:
+    - Signature (RS256 via Microsoft JWKS)
+    - exp/nbf
+    - aud matches configured Azure client_id
+    - iss is a Microsoft issuer (and matches tenant when tenant_id is not 'common')
+    """
+    azure = st.secrets.get("azure", {})
+    client_id = azure.get("client_id")
+    tenant_id = azure.get("tenant_id", "common")
+
+    if not client_id:
+        raise RuntimeError("Azure client_id is not configured.")
+
+    jwk_client = _get_ms_jwk_client(tenant_id)
+    signing_key = jwk_client.get_signing_key_from_jwt(id_token).key
+
+    claims = jwt.decode(
+        id_token,
+        signing_key,
+        algorithms=["RS256"],
+        audience=client_id,
+        options={
+            "verify_signature": True,
+            "verify_aud": True,
+            "verify_exp": True,
+            "verify_nbf": True,
+            "verify_iss": False,
+        },
+    )
+
+    iss = (claims.get("iss") or "").strip()
+    tid = (claims.get("tid") or "").strip()
+
+    if tenant_id and tenant_id != "common":
+        allowed = {
+            f"https://login.microsoftonline.com/{tenant_id}/v2.0",
+            f"https://sts.windows.net/{tenant_id}/",
+        }
+        if iss not in allowed:
+            raise jwt.InvalidIssuerError("Token issuer mismatch.")
+    else:
+        if not (
+            iss.startswith("https://login.microsoftonline.com/")
+            or iss.startswith("https://sts.windows.net/")
+        ):
+            raise jwt.InvalidIssuerError("Token issuer is not a Microsoft issuer.")
+
+        # If you later lock to a single tenant, compare tid to that tenant_id.
+        if not tid:
+            raise jwt.InvalidTokenError("Token missing tenant id (tid).")
+
+    return claims
 
 # -------------------------------------------------------------------
 # Convert Member Rows → DataFrame for Data Editor

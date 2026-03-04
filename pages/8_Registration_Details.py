@@ -1,5 +1,4 @@
 import streamlit as st
-import jwt
 import pandas as pd
 from uuid import uuid4
 
@@ -8,6 +7,7 @@ from helpers import (
     get_authenticated_supabase,
     members_to_dataframe,
     sanitize_text,
+    verify_microsoft_id_token,
     hide_sidebar,
     back_button,
     remove_st_branding
@@ -40,7 +40,13 @@ if "id_token" not in token:
 # -----------------------------------------------------
 # 2) Decode Microsoft Token
 # -----------------------------------------------------
-decoded = jwt.decode(token["id_token"], options={"verify_signature": False})
+try:
+    decoded = verify_microsoft_id_token(token["id_token"])
+except Exception:
+    st.error("✖ Invalid login session. Please sign in again.")
+    back_button("Home.py")
+    st.write("---")
+    st.stop()
 
 raw_name = decoded.get("name", "")
 user_email = (
