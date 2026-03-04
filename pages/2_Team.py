@@ -117,15 +117,27 @@ teams = load_teams(client)
 team_member_counts = count_team_members(client, teams)
 st.session_state["teams"] = teams
 
+MAX_TEAMS = 25
+team_cap_reached = len(teams) >= MAX_TEAMS
+
 # -------------------------------------------------------
 # Load current draft selection
 # -------------------------------------------------------
 current_team_id = draft.get("team_id") if "team_id" in draft else None
 
 st.write("---")
+
+options = ["Continue Independently", "Join a Team", "Create a Team"]
+if team_cap_reached:
+    options = ["Continue Independently", "Join a Team"]
+    st.warning(
+        "The maximum number of teams has been reached. "
+        "Please join an existing team or contact an admin for support."
+    )
+
 choice = st.selectbox(
     "Select an option:",
-    ["Continue Independently", "Join a Team", "Create a Team"],
+    options,
     index=(0 if current_team_id is None else 1),
 )
 
@@ -217,6 +229,13 @@ Members: **{count}**
 elif choice == "Create a Team":
     st.subheader("Create a New Team")
     st.info("If you create a team you will automatically be assigned as the team leader of that team.")
+
+    if team_cap_reached:
+        st.error(
+            "Team creation is currently unavailable because the maximum number of teams (25) has been reached. "
+            "Please join an existing team or contact an admin."
+        )
+        st.stop()
 
     with st.form("create_team_form"):
         new_name_raw = st.text_input("Team Name *")
