@@ -75,7 +75,8 @@ client = get_authenticated_supabase()
 # Load teams and members
 teams_data = (
     client.table("teams")
-    .select("id, team_name, route, members(*)")
+    .select("id, team_name, route, on_waiting_list, members(*)")
+    .eq("on_waiting_list", False)
     .execute()
     .data
     or []
@@ -280,13 +281,72 @@ with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
 
 
 # -----------------------------------------------------
-# Teams & Members Section
+# Confirmed Teams & Members Section
 # -----------------------------------------------------
 st.markdown("---")
-st.subheader("Teams & Members")
-st.caption("View and manage all teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
+st.subheader("Confirmed Teams & Members")
+st.caption("View and manage all confirmed teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
 
 for team in teams_data:
+    team_members = team.get("members") or []
+
+    with st.expander(f"{team['team_name']} — Route: {team.get('route','')} ({len(team_members)}/5 Members)"):
+
+        if team_members:
+            df_team = members_to_dataframe(team_members, team_id_to_name)
+            render_member_editor(df_team, team_id_to_name, team_name_to_id, client, team["team_name"], dropdowns)
+        else:
+            st.info("No members assigned to this team.")
+
+        # Delete Team (with confirmation)
+        with st.container():
+            st.markdown("**Delete Team:**")
+            
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                st.write(team['team_name'])
+            
+            with col2:
+                if st.button(f"⌦ Delete", key=f"del_team_btn_{team['id']}", use_container_width=True):
+                    st.session_state["confirm_delete_team"] = team["id"]
+            
+            # Confirmation dialog
+            if st.session_state.get("confirm_delete_team") == team["id"]:
+                st.error(f"⚠︎ Delete team '{team['team_name']}'? Members will be unassigned.")
+                
+                col_confirm, col_cancel = st.columns([1, 1])
+                
+                with col_confirm:
+                    if st.button("✔ Confirm", key=f"confirm_yes_{team['id']}", use_container_width=True):
+                        delete_team(team["id"], client)
+                        st.session_state["confirm_delete_team"] = None
+                        st.rerun()
+                
+                with col_cancel:
+                    if st.button("✖ Cancel", key=f"confirm_no_{team['id']}", use_container_width=True):
+                        st.session_state["confirm_delete_team"] = None
+                        st.rerun()
+
+
+# -----------------------------------------------------
+# Confirmed Teams & Members Section
+# -----------------------------------------------------
+st.markdown("---")
+st.subheader("Teams on the Waiting List")
+st.caption("View and manage all teams on the waiting list.")
+
+unassigned_teams_data = (
+    client.table("teams")
+    .select("id, team_name, route, on_waiting_list, members(*)")
+    .eq("on_waiting_list", True)
+    .execute()
+    .data
+    or []
+)
+
+
+for team in unassigned_teams_data:
     team_members = team.get("members") or []
 
     with st.expander(f"{team['team_name']} — Route: {team.get('route','')} ({len(team_members)}/5 Members)"):
