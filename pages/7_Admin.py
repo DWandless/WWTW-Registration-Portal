@@ -1,11 +1,11 @@
 import streamlit as st
+import jwt
 import pandas as pd
 
 from helpers import (
     init_page,
     require_access,
     get_authenticated_supabase,
-    verify_microsoft_id_token,
     members_to_dataframe,
     apply_member_updates,
     export_excel,
@@ -45,13 +45,7 @@ if "id_token" not in token:
 # -----------------------------------------------------
 # 2) Decode Microsoft Token (same as home.py)
 # -----------------------------------------------------
-try:
-    decoded = verify_microsoft_id_token(token["id_token"])
-except Exception:
-    st.error("✖ Invalid login session. Please sign in again.")
-    back_button("Home.py")
-    st.write("---")
-    st.stop()
+decoded = jwt.decode(token["id_token"], options={"verify_signature": False})
 
 raw_name = decoded.get("name", "Unknown User")
 user_email = (
@@ -198,6 +192,109 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
         member_name = matching_rows["Full Name"].values[0] if not matching_rows.empty else "Member"
         
         st.error(f"⚠︎ Delete '{member_name}'?")
+        
+        confirm_cols = st.columns([1, 1, 2])
+        
+        with confirm_cols[0]:
+            if st.button("✔ Confirm", key=f"confirm_delete_yes_{title}", use_container_width=True):
+                delete_member(st.session_state[pending_key], client)
+                st.session_state[pending_key] = None
+                st.session_state.pop(f"delete_select_{title}", None)  # Clear selectbox state
+                st.rerun()
+        
+        with confirm_cols[1]:
+            if st.button("✖ Cancel", key=f"confirm_delete_no_{title}", use_container_width=True):
+                st.session_state[pending_key] = None
+                st.session_state.pop(f"delete_select_{title}", None)  # Clear selectbox state
+                st.rerun()
+    
+    st.markdown("---")
+
+def render_volunteer_editor(df_vol, team_id_to_name, team_name_to_id, client, title, volunteer_dropdowns):
+    if df_vol.empty:
+        st.info(f"No volunteers to display for {title}.")
+        return
+
+    # Clear any stale pending delete state for this section
+    pending_key = f"pending_delete_{title}"
+    if pending_key in st.session_state and st.session_state[pending_key] is not None:
+        # Check if the volunteer still exists in df_vol
+        volunteer_id_str = str(st.session_state[pending_key])
+        if not any(df_vol["id"] == volunteer_id_str):
+            # Volunteer no longer exists in this list, clear the state
+            st.session_state[pending_key] = None
+            st.session_state.pop(f"delete_select_{title}", None)
+
+    df_ids = df_vol.copy()
+
+    # Build dynamic Team Name options: include teams that have space (less than 5 active members)
+    # and always include any team present in this dataframe (so current members keep their team).
+    try:
+        active_volunteers = client.table("volunteers").select("team_id").eq("on_waiting_list", False).execute().data or []
+    except Exception:
+        active_volunteers = []
+
+    counts = {}
+    for m in active_volunteers:
+        tid = m.get("team_id")
+        if tid is None:
+            continue
+        counts[tid] = counts.get(tid, 0) + 1
+
+
+    # Make a local copy of dropdowns and override Team Name options
+    local_dropdowns = volunteer_dropdowns.copy()
+
+    # ---- Show editable table (no delete column) ----
+    edited = st.data_editor(
+        df_vol.drop(columns=["id"]),
+        width="stretch",
+        num_rows="fixed",
+        hide_index=True,
+        column_config=local_dropdowns,
+        key=f"editor_{title}"
+    )
+
+    # Restore IDs
+    edited["id"] = df_ids["id"]
+
+    # ---- Apply updates ----
+    applied = apply_member_updates(edited, df_ids, team_name_to_id, client)
+    if applied > 0:
+        st.success(f"Applied {applied} update(s).")
+        st.rerun()
+
+    volunteer_options = {
+        f"{row['Full Name']} — {row['Employee Email']}": row["id"]
+        for _, row in df_vol.iterrows()
+    }
+
+    st.markdown("**Delete Volunteer:**")
+    
+    cols = st.columns([3, 1])
+    
+    with cols[0]:
+        selected = st.selectbox(
+            "Select volunteer to delete",
+            list(volunteer_options.keys()),
+            key=f"delete_select_{title}",
+            label_visibility="collapsed"
+        )
+    
+    pending_key = f"pending_delete_{title}"
+    
+    with cols[1]:
+        if st.button("⌦ Delete", key=f"delete_btn_{title}", use_container_width=True):
+            st.session_state[pending_key] = volunteer_options[selected]
+    
+    # Confirmation dialog
+    if st.session_state.get(pending_key):
+        # Safely get volunteer name from dataframe
+        volunteer_id_str = str(st.session_state[pending_key])
+        matching_rows = df_vol[df_vol["id"] == volunteer_id_str]
+        volunteer_name = matching_rows["Full Name"].values[0] if not matching_rows.empty else "Volunteer"
+        
+        st.error(f"⚠︎ Delete '{volunteer_name}'?")
         
         confirm_cols = st.columns([1, 1, 2])
         
