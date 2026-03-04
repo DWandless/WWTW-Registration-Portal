@@ -81,7 +81,8 @@ client = get_authenticated_supabase()
 # Load teams and members
 teams_data = (
     client.table("teams")
-    .select("id, team_name, route, members(*)")
+    .select("id, team_name, route, on_waiting_list, members(*)")
+    .eq("on_waiting_list", False)
     .execute()
     .data
     or []
@@ -235,6 +236,7 @@ dropdowns = {
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
+    "Area": st.column_config.TextColumn("Area"),
 }
 
 # -----------------------------------------------------
@@ -247,8 +249,10 @@ st.caption("Manage volunteers who have signed up to assist with the event.")
 
 with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
     if volunteers:
-        df_vol = pd.DataFrame(volunteers)
-        st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+        # df_vol = pd.DataFrame(volunteers)
+        # st.dataframe(df_vol[["full_name", "employee_email", "employee_id", "mobile_number", "area"]])
+        df_vol = members_to_dataframe(volunteers)
+        render_member_editor(df_vol, team_id_to_name, team_name_to_id, client, "Volunteers", dropdowns)
     else:
         st.info("No volunteers have signed up yet.")
 
@@ -286,11 +290,11 @@ with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
 
 
 # -----------------------------------------------------
-# Teams & Members Section
+# Confirmed Teams & Members Section
 # -----------------------------------------------------
 st.markdown("---")
-st.subheader("Teams & Members")
-st.caption("View and manage all teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
+st.subheader("Confirmed Teams & Members")
+st.caption("View and manage all confirmed teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
 
 for team in teams_data:
     team_members = team.get("members") or []
@@ -333,6 +337,31 @@ for team in teams_data:
                         st.session_state["confirm_delete_team"] = None
                         st.rerun()
 
+
+# -----------------------------------------------------
+# Confirmed Teams & Members Section
+# -----------------------------------------------------
+st.markdown("---")
+st.subheader("Teams on the Waiting List")
+st.caption("View and manage all teams on the waiting list.")
+
+unassigned_teams_data = (
+    client.table("teams")
+    .select("id, team_name, route, on_waiting_list, members(*)")
+    .eq("on_waiting_list", True)
+    .execute()
+    .data
+    or []
+)
+
+with st.expander(f"Unassigned Teams ({len(unassigned_teams_data)})", expanded=False):
+    if unassigned_teams_data:
+        df_vol = pd.DataFrame(unassigned_teams_data)
+        st.dataframe(df_vol[["team_name", "route", "on_waiting_list"]])
+    else:
+        st.info("No teams are currently on the waiting list.")
+
+    
 # -----------------------------------------------------
 # EXPORT BUTTON
 # -----------------------------------------------------
