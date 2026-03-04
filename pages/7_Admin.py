@@ -345,48 +345,14 @@ unassigned_teams_data = (
     or []
 )
 
+with st.expander(f"Unassigned Teams ({len(unassigned_teams_data)})", expanded=False):
+    if unassigned_teams_data:
+        df_vol = pd.DataFrame(unassigned_teams_data)
+        st.dataframe(df_vol[["team_name", "route", "on_waiting_list"]])
+    else:
+        st.info("No teams are currently on the waiting list.")
 
-for team in unassigned_teams_data:
-    team_members = team.get("members") or []
-
-    with st.expander(f"{team['team_name']} — Route: {team.get('route','')} ({len(team_members)}/5 Members)"):
-
-        if team_members:
-            df_team = members_to_dataframe(team_members, team_id_to_name)
-            render_member_editor(df_team, team_id_to_name, team_name_to_id, client, team["team_name"], dropdowns)
-        else:
-            st.info("No members assigned to this team.")
-
-        # Delete Team (with confirmation)
-        with st.container():
-            st.markdown("**Delete Team:**")
-            
-            col1, col2 = st.columns([3, 1])
-            
-            with col1:
-                st.write(team['team_name'])
-            
-            with col2:
-                if st.button(f"⌦ Delete", key=f"del_team_btn_{team['id']}", use_container_width=True):
-                    st.session_state["confirm_delete_team"] = team["id"]
-            
-            # Confirmation dialog
-            if st.session_state.get("confirm_delete_team") == team["id"]:
-                st.error(f"⚠︎ Delete team '{team['team_name']}'? Members will be unassigned.")
-                
-                col_confirm, col_cancel = st.columns([1, 1])
-                
-                with col_confirm:
-                    if st.button("✔ Confirm", key=f"confirm_yes_{team['id']}", use_container_width=True):
-                        delete_team(team["id"], client)
-                        st.session_state["confirm_delete_team"] = None
-                        st.rerun()
-                
-                with col_cancel:
-                    if st.button("✖ Cancel", key=f"confirm_no_{team['id']}", use_container_width=True):
-                        st.session_state["confirm_delete_team"] = None
-                        st.rerun()
-
+    
 # -----------------------------------------------------
 # EXPORT BUTTON
 # -----------------------------------------------------
