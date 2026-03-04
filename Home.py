@@ -4,10 +4,9 @@ import pandas as pd
 import os
 from uuid import uuid4
 from authlib.integrations.requests_client import OAuth2Session
-import jwt
 import base64
 from pathlib import Path
-from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo
+from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo, verify_microsoft_id_token
 
 # ---------------------------------------------
 # Icon loading
@@ -114,7 +113,12 @@ token = st.session_state["token"]
 if token and "id_token" in token:
 
     # Decode Microsoft ID Token
-    decoded = jwt.decode(token["id_token"], options={"verify_signature": False})
+    try:
+        decoded = verify_microsoft_id_token(token["id_token"])
+    except Exception:
+        st.error("Invalid login session. Please sign in again.")
+        st.session_state.clear()
+        st.stop()
 
     # Extract name + email from v1 token
     user_name_raw = decoded.get("name", "Unknown User")
