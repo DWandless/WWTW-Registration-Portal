@@ -240,5 +240,4 @@ if is_team_leader:
                     st.error("Could not remove the selected member.")
                     st.exception(e)
 
-st.write("---")
 back_button("Home.py")
