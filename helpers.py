@@ -129,15 +129,37 @@ def get_authenticated_supabase():
 
     client = get_supabase()
 
+    cached_session = st.session_state.get("supabase_session")
+    if isinstance(cached_session, dict):
+        access_token = cached_session.get("access_token")
+        refresh_token = cached_session.get("refresh_token")
+        if access_token and refresh_token:
+            try:
+                client.auth.set_session(access_token, refresh_token)
+                return client
+            except Exception:
+                st.session_state.pop("supabase_session", None)
+
     try:
-        client.auth.sign_in_with_id_token({
+        auth_res = client.auth.sign_in_with_id_token({
             "provider": "azure",
             "id_token": token["id_token"],
             "token": token["access_token"]
         })
+
+        session = getattr(auth_res, "session", None)
+        if session is not None:
+            st.session_state["supabase_session"] = {
+                "access_token": getattr(session, "access_token", None),
+                "refresh_token": getattr(session, "refresh_token", None),
+            }
     except Exception as e:
-        st.error("Supabase authentication failed — please re-login.")
-        st.exception(e)
+        msg = str(e)
+        if "rate limit" in msg.lower():
+            st.error("Supabase authentication rate limit reached. Please wait 30–60 seconds and try again, or log in again.")
+        else:
+            st.error("Supabase authentication failed — please re-login.")
+            st.exception(e)
         st.stop()
 
     return client
