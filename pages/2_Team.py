@@ -212,11 +212,15 @@ elif choice == "Join a Team":
                     f"""
 ### {tn}
 Route: **{tr}**  
-Status: **{'WAITING LIST' if is_team_waiting_list else 'Confirmed'}**  
 Created by: **{team_leader_by_id.get(str(tid), '')}**  
 Members: **{count}**
                     """
                 )
+
+                if is_team_waiting_list:
+                    st.warning(
+                        "WARNING: This team is on the waiting list, joining this team will move you to the waiting list also"
+                    )
                 st.progress(min(count / 5, 1.0))
 
                 if st.button(f"Select {tn}", key=f"join_{tid}"):
