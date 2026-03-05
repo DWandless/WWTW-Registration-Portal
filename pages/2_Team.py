@@ -219,7 +219,7 @@ Members: **{count}**
 
                 if is_team_waiting_list:
                     st.warning(
-                        "WARNING: This team is on the waiting list, joining this team will move you to the waiting list also"
+                        "This team is on the waiting list"
                     )
                 st.progress(min(count / 5, 1.0))
 
