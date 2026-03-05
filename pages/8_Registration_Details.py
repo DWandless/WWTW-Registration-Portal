@@ -8,6 +8,7 @@ from helpers import (
     members_to_dataframe,
     sanitize_text,
     verify_microsoft_id_token,
+    apply_member_updates,
     hide_sidebar,
     back_button,
     remove_st_branding
@@ -73,7 +74,11 @@ client = get_authenticated_supabase()
 _current_user_rows = (
     client
     .table("members")
-    .select("id, team_id, role")
+    .select(
+        "id, team_id, role, full_name, employee_email, employee_id, mobile_number, organisation, "
+        "preferred_route, shirt_size, forces_vet, camping_fri, camping_sat, taking_car, travelling_from, "
+        "notes, hiking_experience, on_waiting_list, dropped_out"
+    )
     .eq("employee_email", user_email)
     .limit(1)
     .execute()
@@ -95,36 +100,112 @@ if not current_user:
     back_button("Home.py")
     st.stop()
 
-if not current_user.get("team_id"):
-    st.write("---")
-    st.warning("You are not currently assigned to a team, update your details and assign yourself to a team or contact an admin.")
-    st.write("---")
-    st.caption("If you need to update your registration details, please click the button below.")
-    if st.button("Update Registration Details"):
-            st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/1_Personal.py")
+# -----------------------------------------------------
+# 4) Self-service: edit your own registration details
+# -----------------------------------------------------
+st.write("---")
+st.markdown("### Your Registration")
+st.caption("View and update your individual registration details below.")
 
+team_id = current_user.get("team_id")
+
+team_lookup = {}
+team_name_to_id = {}
+team = None
+
+if team_id:
+    _team_rows = (
+        client
+        .table("teams")
+        .select("id, team_name, route")
+        .eq("id", team_id)
+        .limit(1)
+        .execute()
+        .data
+        or []
+    )
+    team = _team_rows[0] if _team_rows else None
+    if team:
+        team_lookup = {team_id: team.get("team_name")}
+        team_name_to_id = {team.get("team_name"): team_id}
+
+df_self = members_to_dataframe([current_user], team_lookup)
+
+self_visible_columns = [
+    "Team Name",
+    "Role",
+    "Full Name",
+    "Employee Email",
+    "Employee ID",
+    "Mobile Number",
+    "Organisation",
+    "Preferred Route",
+    "Shirt Size",
+    "Forces Veteran",
+    "Camping Friday",
+    "Camping Saturday",
+    "Taking Car",
+    "Travelling From",
+    "Hiking Experience",
+    "Notes",
+    "On Waiting List",
+    "Dropped Out",
+]
+
+df_self_view = df_self[self_visible_columns].copy()
+df_self_ids = df_self.copy()
+
+self_dropdowns = {
+    "Organisation": st.column_config.SelectboxColumn("Organisation", options=["L-ES", "L-CSC", "Velonetic", "CSC"]),
+    "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher"]),
+    "Shirt Size": st.column_config.SelectboxColumn("Shirt Size", options=["XS", "S", "M", "L", "XL", "XXL"]),
+    "Forces Veteran": st.column_config.CheckboxColumn("Forces Veteran"),
+    "Camping Friday": st.column_config.CheckboxColumn("Camping Friday"),
+    "Camping Saturday": st.column_config.CheckboxColumn("Camping Saturday"),
+    "Taking Car": st.column_config.CheckboxColumn("Taking Car"),
+    "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
+    "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
+    "Notes": st.column_config.TextColumn("Notes"),
+    "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
+    "Travelling From": st.column_config.TextColumn("Travelling From"),
+}
+
+disabled_columns = [
+    "Team Name",
+    "Role",
+    "Full Name",
+    "Employee Email",
+    "On Waiting List",
+    "Dropped Out",
+]
+
+edited_self = st.data_editor(
+    df_self_view,
+    width="stretch",
+    num_rows="fixed",
+    hide_index=True,
+    column_config=self_dropdowns,
+    disabled=disabled_columns,
+    key="self_editor",
+)
+
+edited_self["id"] = df_self_ids["id"]
+original_self = df_self_ids.copy()
+
+applied_self = apply_member_updates(edited_self, original_self, team_name_to_id, client)
+if applied_self > 0:
+    st.success("Saved.")
+    st.rerun()
+
+if not team_id:
+    st.write("---")
+    st.info("You are not currently assigned to a team.")
     back_button("Home.py")
     st.stop()
 
-team_id = current_user["team_id"]
-
 # -----------------------------------------------------
-# 4) Load team + members
+# 5) Load team + members
 # -----------------------------------------------------
-_team_rows = (
-    client
-    .table("teams")
-    .select("id, team_name, route")
-    .eq("id", team_id)
-    .limit(1)
-    .execute()
-    .data
-    or []
-)
-
-team = _team_rows[0] if _team_rows else None
-
 if not team:
     st.error("Your team could not be found.")
     back_button("Home.py")
@@ -148,7 +229,7 @@ team_members = (
 is_team_leader = (current_user.get("role") or "").strip().lower() == "leader"
 
 # -----------------------------------------------------
-# 5) Display
+# 6) Display team
 # -----------------------------------------------------
 st.write("---")
 
