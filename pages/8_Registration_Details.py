@@ -179,13 +179,17 @@ disabled_columns = [
     "Dropped Out",
 ]
 
+# Hide non-editable columns from the self-service editor
+self_editable_columns = [c for c in self_visible_columns if c not in disabled_columns]
+df_self_view = df_self[self_editable_columns].copy()
+
 edited_self = st.data_editor(
     df_self_view,
     width="stretch",
     num_rows="fixed",
     hide_index=True,
     column_config=self_dropdowns,
-    disabled=disabled_columns,
+    disabled=[],
     key="self_editor",
 )
 
