@@ -297,7 +297,7 @@ def apply_team_updates(edited_df, original_df, client):
     return updates
 
 
-def render_team_editor(df_teams, client, title, dropdowns):
+def render_team_editor(df_teams, client, title, dropdowns, disabled_columns=None):
     if df_teams.empty:
         st.info(f"No teams to display for {title}.")
         return
@@ -317,6 +317,7 @@ def render_team_editor(df_teams, client, title, dropdowns):
         num_rows="fixed",
         hide_index=True,
         column_config=dropdowns,
+        disabled=(disabled_columns or []),
         key=f"editor_{title}",
     )
 
@@ -672,6 +673,7 @@ unassigned_teams_data = (
 )
 
 team_waiting_dropdowns = {
+    "Team Leader": st.column_config.TextColumn("Team Leader"),
     "Team Name": st.column_config.TextColumn("Team Name"),
     "Route": st.column_config.SelectboxColumn("Route", options=["Peak", "Tough", "Tougher"]),
     "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
@@ -679,8 +681,37 @@ team_waiting_dropdowns = {
 
 with st.expander(f"Teams on Waiting List ({len(unassigned_teams_data)})", expanded=False):
     if unassigned_teams_data:
+        waiting_team_ids = [str(t.get("id")) for t in (unassigned_teams_data or []) if t.get("id") is not None]
+        leader_by_team_id = {}
+
+        if waiting_team_ids:
+            try:
+                leader_rows = (
+                    client.table("members")
+                    .select("team_id, full_name, role")
+                    .in_("team_id", waiting_team_ids)
+                    .execute()
+                    .data
+                    or []
+                )
+                for r in leader_rows:
+                    if str((r.get("role") or "")).strip().lower() == "leader":
+                        leader_by_team_id[str(r.get("team_id"))] = r.get("full_name")
+            except Exception:
+                leader_by_team_id = {}
+
         df_waiting_teams = teams_to_dataframe(unassigned_teams_data)
-        render_team_editor(df_waiting_teams, client, "WaitingListTeams", team_waiting_dropdowns)
+        df_waiting_teams["Team Leader"] = df_waiting_teams["id"].map(lambda tid: leader_by_team_id.get(str(tid), ""))
+        cols = ["id", "Team Leader", "Team Name", "Route", "On Waiting List"]
+        df_waiting_teams = df_waiting_teams[[c for c in cols if c in df_waiting_teams.columns]]
+
+        render_team_editor(
+            df_waiting_teams,
+            client,
+            "WaitingListTeams",
+            team_waiting_dropdowns,
+            disabled_columns=["Team Leader"],
+        )
     else:
         st.info("No teams are currently on the waiting list.")
 
