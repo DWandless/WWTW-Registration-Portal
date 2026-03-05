@@ -81,7 +81,7 @@ def load_teams(client):
     try:
         team_res = (
             client.table("teams")
-            .select("id, team_name, route")
+            .select("id, team_name, route, on_waiting_list")
             .order("team_name")
             .execute()
         )
@@ -200,49 +200,51 @@ elif choice == "Join a Team":
                 tid = t["id"]
                 tn = t["team_name"]
                 tr = t["route"]
+                is_team_waiting_list = bool(t.get("on_waiting_list"))
                 count = team_member_counts.get(tid, 0)
 
                 is_full = count >= 5
+
+                if is_full:
+                    continue
 
                 st.markdown(
                     f"""
 ### {tn}
 Route: **{tr}**  
+Status: **{'WAITING LIST' if is_team_waiting_list else 'Confirmed'}**  
 Created by: **{team_leader_by_id.get(str(tid), '')}**  
 Members: **{count}**
                     """
                 )
                 st.progress(min(count / 5, 1.0))
 
-                if is_full:
-                    st.button(f"Team Full", key=f"join_{tid}", disabled=True)
-                else:
-                    if st.button(f"Select {tn}", key=f"join_{tid}"):
+                if st.button(f"Select {tn}", key=f"join_{tid}"):
 
-                        # Live capacity check
-                        try:
-                            latest_res = (
-                                client.table("members")
-                                .select("id", count="exact")
-                                .eq("team_id", tid)
-                                .execute()
-                            )
-                            latest_count = latest_res.count or 0
-                        except Exception:
-                            latest_count = team_member_counts.get(tid, 0)
+                    # Live capacity check
+                    try:
+                        latest_res = (
+                            client.table("members")
+                            .select("id", count="exact")
+                            .eq("team_id", tid)
+                            .execute()
+                        )
+                        latest_count = latest_res.count or 0
+                    except Exception:
+                        latest_count = team_member_counts.get(tid, 0)
 
-                        if latest_count >= 5:
-                            st.error("This team is now full. Please select another team.")
-                            st.stop()
+                    if latest_count >= 5:
+                        st.error("This team is now full. Please select another team.")
+                        st.stop()
 
-                        draft.update({
-                            "team_id": tid,
-                            "team_name": tn,
-                            "team_route": tr,
-                            "role": "Member",
-                        })
-                        st.session_state["draft"] = draft
-                        st.switch_page("pages/3_Route.py")
+                    draft.update({
+                        "team_id": tid,
+                        "team_name": tn,
+                        "team_route": tr,
+                        "role": "Member",
+                    })
+                    st.session_state["draft"] = draft
+                    st.switch_page("pages/3_Route.py")
 
 
 # -------------------------------------------------------
