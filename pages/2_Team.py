@@ -121,6 +121,24 @@ teams = load_teams(client)
 team_member_counts = count_team_members(client, teams)
 st.session_state["teams"] = teams
 
+team_leader_by_id = {}
+team_ids = [str(t.get("id")) for t in (teams or []) if t.get("id") is not None]
+if team_ids:
+    try:
+        leader_rows = (
+            client.table("members")
+            .select("team_id, full_name, role")
+            .in_("team_id", team_ids)
+            .execute()
+            .data
+            or []
+        )
+        for r in leader_rows:
+            if str((r.get("role") or "")).strip().lower() == "leader":
+                team_leader_by_id[str(r.get("team_id"))] = r.get("full_name")
+    except Exception:
+        team_leader_by_id = {}
+
 MAX_TEAMS = 30
 team_cap_reached = len(teams) >= MAX_TEAMS
 
@@ -190,6 +208,7 @@ elif choice == "Join a Team":
                     f"""
 ### {tn}
 Route: **{tr}**  
+Created by: **{team_leader_by_id.get(str(tid), '')}**  
 Members: **{count}**
                     """
                 )
