@@ -240,6 +240,8 @@ if not team_id:
                 for t in eligible_teams
             }
 
+            st.markdown("### Join an Available Team")
+            st.caption("You're not currently assigned to a team. If you'd like to join one, select a team below. Only teams with available spaces are shown.")
             selected_label = st.selectbox(
                 "Select a team to join",
                 options=list(team_options.keys()),
@@ -280,7 +282,7 @@ if not team_id:
                     st.error("Could not join the selected team.")
                     st.exception(e)
         else:
-            st.info("There are currently no teams available to join.")
+            st.info("There are currently no teams available to join (teams may be full or on the waiting list). Please contact an admin.")
 
     back_button("Home.py")
     st.stop()
