@@ -121,7 +121,7 @@ teams = load_teams(client)
 team_member_counts = count_team_members(client, teams)
 st.session_state["teams"] = teams
 
-MAX_TEAMS = 25
+MAX_TEAMS = 30
 team_cap_reached = len(teams) >= MAX_TEAMS
 
 # -------------------------------------------------------
