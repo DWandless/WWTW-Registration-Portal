@@ -203,6 +203,81 @@ if applied_self > 0:
 
 if not team_id:
     st.write("---")
+    if current_user.get("on_waiting_list") is False:
+        teams = (
+            client
+            .table("teams")
+            .select("id, team_name, route, on_waiting_list")
+            .eq("on_waiting_list", False)
+            .order("team_name")
+            .execute()
+            .data
+            or []
+        )
+
+        team_member_counts = {}
+        try:
+            mres = client.table("members").select("team_id").execute()
+            for m in (mres.data or []):
+                tid = m.get("team_id")
+                if tid:
+                    team_member_counts[tid] = team_member_counts.get(tid, 0) + 1
+        except Exception:
+            pass
+
+        eligible_teams = [
+            t for t in teams
+            if team_member_counts.get(t.get("id"), 0) < 5
+        ]
+
+        if eligible_teams:
+            team_options = {
+                f"{t.get('team_name')} — {t.get('route', 'Not set')} ({team_member_counts.get(t.get('id'), 0)}/5)": t.get("id")
+                for t in eligible_teams
+            }
+
+            selected_label = st.selectbox(
+                "Select a team to join",
+                options=list(team_options.keys()),
+            )
+            selected_team_id = team_options[selected_label]
+
+            if st.button("Join Team"):
+                try:
+                    team_row = (
+                        client.table("teams")
+                        .select("id, on_waiting_list")
+                        .eq("id", selected_team_id)
+                        .limit(1)
+                        .execute()
+                        .data
+                        or []
+                    )
+                    if not team_row or team_row[0].get("on_waiting_list") is True:
+                        st.error("That team is no longer available.")
+                        st.stop()
+
+                    latest_res = (
+                        client.table("members")
+                        .select("id", count="exact")
+                        .eq("team_id", selected_team_id)
+                        .execute()
+                    )
+                    latest_count = latest_res.count or 0
+
+                    if latest_count >= 5:
+                        st.error("This team is now full. Please select another team.")
+                        st.stop()
+
+                    client.table("members").update({"team_id": selected_team_id, "role": "Member"}).eq("id", current_user.get("id")).execute()
+                    st.success("Joined team.")
+                    st.rerun()
+                except Exception as e:
+                    st.error("Could not join the selected team.")
+                    st.exception(e)
+        else:
+            st.info("There are currently no teams available to join.")
+
     st.info("You are not currently assigned to a team.")
     back_button("Home.py")
     st.stop()
