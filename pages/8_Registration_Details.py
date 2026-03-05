@@ -203,7 +203,11 @@ if applied_self > 0:
 
 if not team_id:
     st.write("---")
-    if current_user.get("on_waiting_list") is False:
+    if current_user.get("on_waiting_list") is True:
+        st.info(
+            "You are currently on the waiting list. Please return to this page once you have been contacted to assign yourself to a team."
+        )
+    elif current_user.get("on_waiting_list") is False:
         teams = (
             client
             .table("teams")
@@ -278,7 +282,6 @@ if not team_id:
         else:
             st.info("There are currently no teams available to join.")
 
-    st.info("You are not currently assigned to a team.")
     back_button("Home.py")
     st.stop()
 
