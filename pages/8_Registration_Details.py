@@ -375,6 +375,20 @@ if is_team_leader:
                 st.error("Could not update the team name.")
                 st.exception(e)
 
+    with st.expander("Update team route", expanded=False):
+        route_options = ["Peak", "Tough", "Tougher"]
+        current_route = team.get("route") if team.get("route") in route_options else route_options[0]
+        new_route = st.selectbox("Route", route_options, index=route_options.index(current_route))
+
+        if st.button("Update Team Route"):
+            try:
+                client.table("teams").update({"route": new_route}).eq("id", team_id).execute()
+                st.success("Team route updated.")
+                st.rerun()
+            except Exception as e:
+                st.error("Could not update the team route.")
+                st.exception(e)
+
     with st.expander("Remove a member from the team", expanded=False):
         removable_members = [
             m for m in team_members
