@@ -6,8 +6,7 @@ from uuid import uuid4
 from authlib.integrations.requests_client import OAuth2Session
 import base64
 from pathlib import Path
-from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo, verify_microsoft_id_token
-from db import get_supabase
+from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo, verify_microsoft_id_token, get_authenticated_supabase
 
 # ---------------------------------------------
 # Icon loading
@@ -188,7 +187,7 @@ if token and "id_token" in token:
     st.write("") # spacing
 
     # Check if user is registered in Supabase
-    client = get_supabase()
+    client = get_authenticated_supabase()
     member_result = (
         client.table("members")
         .select("id, role")
