@@ -221,6 +221,9 @@ if token and "id_token" in token:
         st.write("Use the relevant code depending on what route your team is taking: DXCPEAK100, DXCTOUGH100, DXCTOUGHER100. ")
         st.link_button("Visit WWTW", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
+    elif str(member_data.get("role", "")).strip().lower() == "member":
+        st.markdown("#### You can now manage your details using the view details button below. ")
+
     st.divider()
     
     # ---- Split Layout: New vs Existing ----
