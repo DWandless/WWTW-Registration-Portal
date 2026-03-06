@@ -197,8 +197,6 @@ if token and "id_token" in token:
     )
     member_data = member_result.data[0] if member_result.data else None
     
-    # DEBUG - remove after testing
-    st.write(f"DEBUG: user_email = '{user_email}', member_data = {member_data}")
 
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
