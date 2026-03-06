@@ -200,9 +200,9 @@ if token and "id_token" in token:
     
     # DEBUG - remove after testing
     st.write(f"DEBUG: user_email = '{user_email.lower()}', result.data = {member_result.data}")
-    # Check if email exists with ilike (case-insensitive pattern match)
-    debug_result = client.table("members").select("employee_email, role").ilike("employee_email", f"%miller%").limit(5).execute()
-    st.write(f"DEBUG emails containing 'miller': {debug_result.data}")
+    # Check total members and show sample emails
+    all_members = client.table("members").select("employee_email, role", count="exact").limit(5).execute()
+    st.write(f"DEBUG: Total members in DB: {all_members.count}, Sample emails: {[m.get('employee_email') for m in all_members.data]}")
 
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
