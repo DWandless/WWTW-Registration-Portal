@@ -219,7 +219,7 @@ if token and "id_token" in token:
         # User is a Leader - show WWTW link
         st.markdown("#### Please make sure to register your team on the official Walking with the Wounded site.")
         st.write("Use the relevant code depending on what route your team is taking: DXCPEAK100, DXCTOUGH100, DXCTOUGHER100. ")
-        st.link_button("Visit WWTW", "https://walkingwiththewounded.org.uk/", type="primary")
+        st.link_button("Visit WWTW", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
     st.divider()
     
