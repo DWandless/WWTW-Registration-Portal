@@ -197,8 +197,12 @@ if token and "id_token" in token:
         .execute()
     )
     member_data = member_result.data[0] if member_result.data else None
-       # DEBUG - remove after testing
+    
+    # DEBUG - remove after testing
     st.write(f"DEBUG: user_email = '{user_email.lower()}', result.data = {member_result.data}")
+    # Check if email exists with ilike (case-insensitive pattern match)
+    debug_result = client.table("members").select("employee_email, role").ilike("employee_email", f"%miller%").limit(5).execute()
+    st.write(f"DEBUG emails containing 'miller': {debug_result.data}")
 
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
