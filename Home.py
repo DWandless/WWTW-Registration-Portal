@@ -7,7 +7,7 @@ from authlib.integrations.requests_client import OAuth2Session
 import base64
 from pathlib import Path
 from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo, verify_microsoft_id_token
-from db import supabase
+from db import get_supabase
 
 # ---------------------------------------------
 # Icon loading
@@ -188,15 +188,16 @@ if token and "id_token" in token:
     st.write("") # spacing
 
     # Check if user is registered in Supabase
+    client = get_supabase()
     member_result = (
-        supabase.table("members")
-        .select("id, role")
+        client.table("members")
+        .select("id, role, employee_email")
         .eq("employee_email", user_email.lower())
         .limit(1)
         .execute()
     )
     member_data = member_result.data[0] if member_result.data else None
-    
+ 
 
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
