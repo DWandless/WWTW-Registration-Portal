@@ -7,6 +7,7 @@ from authlib.integrations.requests_client import OAuth2Session
 import base64
 from pathlib import Path
 from helpers import hide_sidebar, remove_st_branding, apply_header_font, render_logo, verify_microsoft_id_token
+from db import supabase
 
 # ---------------------------------------------
 # Icon loading
@@ -186,22 +187,39 @@ if token and "id_token" in token:
 
     st.write("") # spacing
 
-    # ---- Split Layout: New vs Existing ----
-    col1, col2 = st.columns(2)
+    # Check if user is registered in Supabase
+    member_result = (
+        supabase.table("members")
+        .select("id, role")
+        .eq("employee_email", user_email.lower())
+        .limit(1)
+        .execute()
+    )
+    member_data = member_result.data[0] if member_result.data else None
 
-    with col1:
-        st.markdown("#### Register Here")
-        st.write("Start your registration to join a team and prepare for the event.")
-        if st.button("Start New Registration", type="primary"):
-            st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/1_Personal.py")
-    
-    with col2:
-        st.markdown("#### Sign Up To Volunteer")
-        st.write("Volunteer to help out at the event.")
-        if st.button("Volunteer Registration", type="primary"):
-            st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/9_Volunteers.py")
+    # ---- Split Layout: New vs Existing ----
+    if member_data is None:
+        # User not registered - show registration and volunteer buttons
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("#### Register Here")
+            st.write("Start your registration to join a team and prepare for the event.")
+            if st.button("Start New Registration", type="primary"):
+                st.session_state["SessionID"] = str(uuid4())
+                st.switch_page("pages/1_Personal.py")
+        
+        with col2:
+            st.markdown("#### Sign Up To Volunteer")
+            st.write("Volunteer to help out at the event.")
+            if st.button("Volunteer Registration", type="primary"):
+                st.session_state["SessionID"] = str(uuid4())
+                st.switch_page("pages/9_Volunteers.py")
+    elif str(member_data.get("role", "")).strip().lower() == "leader":
+        # User is a Leader - show WWTW link
+        st.markdown("#### Please make sure to register your team on the official Walking with the Wounded site.")
+        st.write("Use the relevant code depending on what route your team is taking: DXCPEAK100, DXCTOUGH100, DXCTOUGHER100. ")
+        st.link_button("Visit WWTW", "https://walkingwiththewounded.org.uk/", type="primary")
 
     st.divider()
     
