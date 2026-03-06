@@ -191,9 +191,8 @@ if token and "id_token" in token:
     client = get_supabase()
     member_result = (
         client.table("members")
-        .select("id, role, employee_email")
+        .select("id, role")
         .eq("employee_email", user_email.lower())
-        .limit(1)
         .execute()
     )
     member_data = member_result.data[0] if member_result.data else None
