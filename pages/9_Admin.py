@@ -13,8 +13,7 @@ from helpers import (
     delete_member,
     hide_sidebar,
     back_button,
-    remove_st_branding,
-    export_volunteers_excel
+    remove_st_branding
 )
 
 # -----------------------------------------------------
@@ -98,7 +97,7 @@ team_options_with_unassigned = team_options + ["Unassigned"]
 member_select_cols = (
     "id, team_id, role, full_name, organisation, employee_id, employee_email, mobile_number, "
     "preferred_route, shirt_size, travelling_from, forces_vet, camping_fri, camping_sat, taking_car, "
-    "hiking_experience, notes, on_waiting_list, dropped_out"
+    "hiking_experience, notes, on_waiting_list, dropped_out, volunteering_area"
 )
 all_members = client.table("members").select(member_select_cols).execute().data or []
 valid_team_ids = set(team_id_to_name.keys())
@@ -116,11 +115,23 @@ for m in all_members:
 
 waiting_members = [m for m in all_members if bool(m.get("on_waiting_list"))]
 
-unassigned_members = [
+_unassigned_members_raw = [
     m
     for m in all_members
     if not bool(m.get("on_waiting_list"))
     and (m.get("team_id") is None or m.get("team_id") not in valid_team_ids)
+]
+
+volunteer_members = [
+    m
+    for m in _unassigned_members_raw
+    if (m.get("volunteering_area") or "").strip()
+]
+
+unassigned_members = [
+    m
+    for m in _unassigned_members_raw
+    if not (m.get("volunteering_area") or "").strip()
 ]
 
 # -----------------------------------------------------
@@ -389,6 +400,7 @@ dropdowns = {
     "Notes": st.column_config.TextColumn("Notes"),
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
+    "Volunteering Area": st.column_config.TextColumn("Volunteering Area"),
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
 
 }
@@ -420,6 +432,38 @@ with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
         render_member_editor(df_un, team_id_to_name, team_name_to_id, client, "Unassigned", dropdowns, active_counts)
     else:
         st.info("All members are assigned to teams.")
+
+
+# -----------------------------------------------------
+# Volunteers
+# -----------------------------------------------------
+st.markdown("---")
+st.subheader("Volunteers")
+st.caption("Members who have volunteered and are not assigned to any team. Manage volunteer personal details and volunteering areas below.")
+
+with st.expander(f"Volunteers ({len(volunteer_members)})"):
+    if volunteer_members:
+        df_volunteers = members_to_dataframe(volunteer_members, team_id_to_name)
+
+        volunteer_visible_cols = [
+            "id",
+            "Team Name",
+            "Role",
+            "Full Name",
+            "Employee Email",
+            "Employee ID",
+            "Mobile Number",
+            "Organisation",
+            "Forces Veteran",
+            "Volunteering Area",
+            "On Waiting List",
+            "Dropped Out",
+        ]
+
+        df_volunteers = df_volunteers[[c for c in volunteer_visible_cols if c in df_volunteers.columns]]
+        render_member_editor(df_volunteers, team_id_to_name, team_name_to_id, client, "Volunteers", dropdowns, active_counts)
+    else:
+        st.info("No volunteers to display.")
 
 
 # -----------------------------------------------------
@@ -548,7 +592,6 @@ with st.expander(f"Teams on Waiting List ({len(unassigned_teams_data)})", expand
 # EXPORT BUTTON
 # -----------------------------------------------------
 excel_file = export_excel(client)
-volunteers_excel = export_volunteers_excel(client)
 
 st.markdown("---")
 st.subheader("Export Data")
@@ -558,13 +601,6 @@ st.download_button(
     label="Export & Download Teams.xlsx",
     data=excel_file.getvalue(),
     file_name="teams.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-)
-
-st.download_button(
-    label="Export & Download Volunteers.xlsx",
-    data=volunteers_excel.getvalue(),
-    file_name="volunteers.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 )
 

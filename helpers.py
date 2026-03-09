@@ -313,7 +313,7 @@ def export_excel(client):
         "Team Name", "On Waiting List", "Name", "Email", "Mobile Number", "Preferred Route", "Organisation",
         "Role", "Shirt Size", "Forces Veteran", "Camping Friday",
         "Camping Saturday", "Taking Car", "Hiking Experience",
-        "Travelling From", "Notes", "Dropped Out"
+        "Travelling From", "Notes", "Dropped Out", "Volunteering Area"
     ]
 
     ws.append(HEADERS)
@@ -347,7 +347,8 @@ def export_excel(client):
             m.get("hiking_experience", ""),
             m.get("travelling_from", ""),
             m.get("notes", ""), 
-            m.get("dropped_out", False)
+            m.get("dropped_out", False),
+            m.get("volunteering_area", ""),
         ])
 
     _style_worksheet(ws)
