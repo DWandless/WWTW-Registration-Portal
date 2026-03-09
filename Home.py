@@ -164,14 +164,14 @@ if token and "id_token" in token:
                     team_complete = all(_val(k) not in [None, "", float('nan')] for k in ["Team", "Captain", "Registered Team"]) if any(k in row.index for k in ["Team", "Captain", "Registered Team"]) else False
                     route_complete = (_val("Route") not in [None, "", float('nan')]) if ("Route" in row.index) else False
                     logistics_complete = any(_val(k) not in [None, "", float('nan')] for k in ["T-shirt", "Travelling From", "Notes", "Experience"]) if any(k in row.index for k in ["T-shirt", "Travelling From", "Notes", "Experience"]) else False
-                    if not personal_complete: return "pages/1_Personal.py"
-                    if not team_complete: return "pages/2_Team.py"
-                    if not route_complete: return "pages/3_Route.py"
-                    if not logistics_complete: return "pages/4_Logistics.py"
-                    return "pages/5_Review.py"
+                    if not personal_complete: return "pages/3_Personal.py"
+                    if not team_complete: return "pages/4_Team.py"
+                    if not route_complete: return "pages/5_Route.py"
+                    if not logistics_complete: return "pages/6_Logistics.py"
+                    return "pages/7_Review.py"
             except Exception:
                 pass
-        return "pages/1_Form.py"
+        return "pages/3_Personal.py"
     
     # ---- Intro Section ----
     st.markdown("""
@@ -278,14 +278,14 @@ if token and "id_token" in token:
         st.write("View/Edit your current team and registration details.")
         if st.button("View Details", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/8_Registration_Details.py")
+            st.switch_page("pages/10_Registration_Details.py")
     
     with col4:
         st.markdown("#### Admin Panel")
         st.write("Access administrative functions and manage registrations.")
         if st.button("Admin Panel", type="secondary"):
             st.session_state["SessionID"] = str(uuid4())
-            st.switch_page("pages/7_Admin.py")
+            st.switch_page("pages/9_Admin.py")
 
     with col5:
         st.markdown("#### Learn More")
