@@ -154,69 +154,54 @@ if is_volunteer_only:
     st.write("---")
     st.subheader("Volunteer Details")
 
-    AREA_OPTIONS = [
-        "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
-        "Pre-Event Organisation",
-        "Merchandise Support (Source, Design, and Order)",
-        "Setting up the DXC tent and Merch distrubition",
-        "Participant support on the day",
+    volunteer_only_columns = [
+        "Employee ID",
+        "Mobile Number",
+        "Organisation",
+        "Forces Veteran",
+        "Volunteering Area",
     ]
 
-    current_selected = [
-        a.strip() for a in volunteering_area_text.split(",") if a.strip()
-    ]
-    current_selected = [a for a in current_selected if a in AREA_OPTIONS]
+    df_volunteer_view = df_self[volunteer_only_columns].copy()
 
-    with st.form("volunteer_only_form"):
-        employee_id_val = st.text_input(
-            "Employee ID",
-            value=str(current_user.get("employee_id") or ""),
-        )
-        mobile_number_val = st.text_input(
-            "Mobile Number",
-            value=str(current_user.get("mobile_number") or ""),
-        )
-        organisation_val = st.selectbox(
+    volunteer_column_config = {
+        "Organisation": st.column_config.SelectboxColumn(
             "Organisation",
             options=["L-ES", "L-CSC", "Velonetic", "CSC"],
-            index=["L-ES", "L-CSC", "Velonetic", "CSC"].index(
-                current_user.get("organisation")
-            )
-            if current_user.get("organisation") in ["L-ES", "L-CSC", "Velonetic", "CSC"]
-            else 0,
-        )
-        forces_vet_val = st.checkbox(
-            "Forces Veteran",
-            value=bool(current_user.get("forces_vet")),
-        )
-        selected_areas = st.multiselect(
-            "Volunteer Area",
-            AREA_OPTIONS,
-            default=current_selected,
-        )
+        ),
+        "Forces Veteran": st.column_config.CheckboxColumn("Forces Veteran"),
+        "Volunteering Area": st.column_config.TextColumn(
+            "Volunteering Area",
+            help="Enter at least one volunteer area (comma-separated).",
+        ),
+    }
 
-        save = st.form_submit_button("Save")
+    edited_volunteer = st.data_editor(
+        df_volunteer_view,
+        width="stretch",
+        num_rows="fixed",
+        hide_index=True,
+        column_config=volunteer_column_config,
+        disabled=[],
+        key="volunteer_only_editor",
+    )
 
-    if save:
-        if not selected_areas:
-            st.error("Please select at least one volunteer area.")
-            st.stop()
+    edited_volunteer["id"] = df_self["id"]
+    original_volunteer = df_self[["id"] + volunteer_only_columns].copy()
 
-        updates = {
-            "employee_id": sanitize_text(employee_id_val),
-            "mobile_number": sanitize_text(mobile_number_val) or None,
-            "organisation": organisation_val,
-            "forces_vet": bool(forces_vet_val),
-            "volunteering_area": ", ".join(selected_areas),
-        }
+    updated_volunteering_area = (
+        str(edited_volunteer.iloc[0].get("Volunteering Area") or "").strip()
+        if not edited_volunteer.empty
+        else ""
+    )
+    if not updated_volunteering_area:
+        st.error("Please enter at least one volunteer area.")
+        st.stop()
 
-        try:
-            client.table("members").update(updates).eq("id", current_user.get("id")).execute()
-            st.success("Saved.")
-            st.rerun()
-        except Exception as e:
-            st.error("Could not save your details.")
-            st.exception(e)
+    applied_volunteer = apply_member_updates(edited_volunteer, original_volunteer, team_name_to_id, client)
+    if applied_volunteer > 0:
+        st.success("Saved.")
+        st.rerun()
 
     back_button("Home.py")
     st.stop()
