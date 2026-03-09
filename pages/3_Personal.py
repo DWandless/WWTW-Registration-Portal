@@ -242,4 +242,4 @@ if submitted:
         else:
             st.switch_page("pages/4_Team.py")
 
-back_button("Home.py")
+back_button("pages/2_Participation.py")

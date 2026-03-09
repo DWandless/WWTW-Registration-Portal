@@ -57,6 +57,10 @@ if participation_type in {"Volunteering", "Both"}:
 st.write("---")
 
 if st.button("Save & Continue →", type="primary"):
+    if participation_type == "Volunteering" and not selected_areas:
+        st.error("Please select at least one volunteer area to continue.")
+        st.stop()
+
     draft["participation_type"] = participation_type
 
     if participation_type in {"Volunteering", "Both"}:
