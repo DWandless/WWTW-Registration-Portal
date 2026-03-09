@@ -299,7 +299,7 @@ if walking_fields_present and not is_volunteer_only:
     st.subheader("Volunteer Areas")
 
     if not has_volunteering:
-        st.caption("If you would like update your detailts to volunteer as well as walk, please select which area's you would be happy to support with:")
+        st.caption("If you would like update your details to volunteer as well as walk, please select which area's you would be happy to support with:")
     else:
         st.caption("You have signed up as a volunteer, please select & update which area's you would be happy to support with:")
 
