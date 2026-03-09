@@ -124,7 +124,7 @@ _unassigned_members_raw = [
 
 volunteer_members = [
     m
-    for m in _unassigned_members_raw
+    for m in all_members
     if (m.get("volunteering_area") or "").strip()
 ]
 
