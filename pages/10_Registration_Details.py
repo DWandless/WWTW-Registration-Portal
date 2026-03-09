@@ -294,11 +294,14 @@ if applied_self > 0:
     st.success("Saved.")
     st.rerun()
 
-if has_volunteering and walking_fields_present and not is_volunteer_only:
+if walking_fields_present and not is_volunteer_only:
     st.write("---")
     st.subheader("Volunteer Areas")
 
-    st.caption("You have signed up as a volunteer, please select & update which area's you would be happy to support with:")
+    if not has_volunteering:
+        st.caption("If you would like update your detailts to volunteer as well as walk, please select which area's you would be happy to support with:")
+    else:
+        st.caption("You have signed up as a volunteer, please select & update which area's you would be happy to support with:")
 
     current_selected = [a.strip() for a in volunteering_area_text.split(",") if a.strip()]
     current_selected = [a for a in current_selected if a in VOLUNTEER_AREA_OPTIONS_BOTH]
