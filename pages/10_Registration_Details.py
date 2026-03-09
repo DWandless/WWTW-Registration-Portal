@@ -110,6 +110,20 @@ st.caption("View and update your individual registration details below.")
 volunteering_area_text = (current_user.get("volunteering_area") or "").strip()
 has_volunteering = bool(volunteering_area_text)
 
+VOLUNTEER_AREA_OPTIONS_ALL = [
+    "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
+    "Pre-Event Organisation",
+    "Merchandise Support (Source, Design, and Order)",
+    "Setting up the DXC tent and Merch distrubition",
+    "Participant support on the day",
+]
+
+VOLUNTEER_AREA_OPTIONS_BOTH = [
+    "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
+    "Pre-Event Organisation",
+    "Merchandise Support (Source, Design, and Order)",
+]
+
 walking_fields_present = any(
     (current_user.get(k) not in [None, "", False])
     for k in [
@@ -151,13 +165,11 @@ if team_id:
 df_self = members_to_dataframe([current_user], team_lookup)
 
 if is_volunteer_only:
-
     volunteer_only_columns = [
         "Employee ID",
         "Mobile Number",
         "Organisation",
         "Forces Veteran",
-        "Volunteering Area",
     ]
 
     df_volunteer_view = df_self[volunteer_only_columns].copy()
@@ -168,10 +180,6 @@ if is_volunteer_only:
             options=["L-ES", "L-CSC", "Velonetic", "CSC"],
         ),
         "Forces Veteran": st.column_config.CheckboxColumn("Forces Veteran"),
-        "Volunteering Area": st.column_config.TextColumn(
-            "Volunteering Area",
-            help="Enter at least one volunteer area (comma-separated).",
-        ),
     }
 
     edited_volunteer = st.data_editor(
@@ -187,19 +195,31 @@ if is_volunteer_only:
     edited_volunteer["id"] = df_self["id"]
     original_volunteer = df_self[["id"] + volunteer_only_columns].copy()
 
-    updated_volunteering_area = (
-        str(edited_volunteer.iloc[0].get("Volunteering Area") or "").strip()
-        if not edited_volunteer.empty
-        else ""
-    )
-    if not updated_volunteering_area:
-        st.error("Please enter at least one volunteer area.")
-        st.stop()
-
     applied_volunteer = apply_member_updates(edited_volunteer, original_volunteer, team_name_to_id, client)
     if applied_volunteer > 0:
         st.success("Saved.")
         st.rerun()
+
+    current_selected = [a.strip() for a in volunteering_area_text.split(",") if a.strip()]
+    current_selected = [a for a in current_selected if a in VOLUNTEER_AREA_OPTIONS_ALL]
+    selected_areas = st.multiselect(
+        "Volunteer Area",
+        VOLUNTEER_AREA_OPTIONS_ALL,
+        default=current_selected,
+    )
+
+    if st.button("Save Volunteer Areas", key="save_volunteer_areas_volunteer_only"):
+        if not selected_areas:
+            st.error("Please select at least one volunteer area.")
+            st.stop()
+
+        try:
+            client.table("members").update({"volunteering_area": ", ".join(selected_areas)}).eq("id", current_user.get("id")).execute()
+            st.success("Saved.")
+            st.rerun()
+        except Exception as e:
+            st.error("Could not save your volunteer areas.")
+            st.exception(e)
 
     back_button("Home.py")
     st.stop()
@@ -273,6 +293,32 @@ applied_self = apply_member_updates(edited_self, original_self, team_name_to_id,
 if applied_self > 0:
     st.success("Saved.")
     st.rerun()
+
+if has_volunteering and walking_fields_present and not is_volunteer_only:
+    st.write("---")
+    st.subheader("Volunteer Areas")
+
+    current_selected = [a.strip() for a in volunteering_area_text.split(",") if a.strip()]
+    current_selected = [a for a in current_selected if a in VOLUNTEER_AREA_OPTIONS_BOTH]
+
+    selected_areas = st.multiselect(
+        "Volunteer Area",
+        VOLUNTEER_AREA_OPTIONS_BOTH,
+        default=current_selected,
+    )
+
+    if st.button("Save Volunteer Areas", key="save_volunteer_areas_both"):
+        if not selected_areas:
+            st.error("Please select at least one volunteer area.")
+            st.stop()
+
+        try:
+            client.table("members").update({"volunteering_area": ", ".join(selected_areas)}).eq("id", current_user.get("id")).execute()
+            st.success("Saved.")
+            st.rerun()
+        except Exception as e:
+            st.error("Could not save your volunteer areas.")
+            st.exception(e)
 
 if not team_id:
     st.write("---")
