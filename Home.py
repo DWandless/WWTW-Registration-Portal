@@ -248,7 +248,9 @@ if token and "id_token" in token:
             registration_code = None
 
         if registration_code:
-            st.write(f"Use this code for your team's route: {registration_code}")
+            st.write("Team Leaders, please register your team on the official WWTW website using the button below.")
+            st.write("After you have registered the team, tick the confirmation checkbox on this page.")
+            st.write(f"Your team's registration code: {registration_code}")
         else:
             st.write("Your team registration code is not available yet. Please ensure your team route has been set.")
 
@@ -271,7 +273,7 @@ if token and "id_token" in token:
                     st.error("Could not update team registration confirmation.")
                     st.exception(e)
 
-        st.link_button("Visit WWTW", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
+        st.link_button("Register Here", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
     elif str(member_data.get("role", "")).strip().lower() == "member":
         st.warning("You have already registered, to update your details & manage your team please navigate to the Update Resistrations page or contact an admin")
