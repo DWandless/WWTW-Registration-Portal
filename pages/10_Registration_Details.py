@@ -151,8 +151,6 @@ if team_id:
 df_self = members_to_dataframe([current_user], team_lookup)
 
 if is_volunteer_only:
-    st.write("---")
-    st.subheader("Volunteer Details")
 
     volunteer_only_columns = [
         "Employee ID",
