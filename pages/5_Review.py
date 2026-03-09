@@ -30,7 +30,7 @@ def can_submit() -> bool:
 draft = st.session_state.get("draft")
 
 if draft is None:
-    st.switch_page("pages/1_Personal.py")
+    st.switch_page("pages/1_Agreement.py")
 
 client = get_authenticated_supabase()
 

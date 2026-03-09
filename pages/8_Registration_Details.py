@@ -95,7 +95,7 @@ if not current_user:
     st.caption("Register using the button below.")
     if st.button("Register Now"):
         st.session_state["SessionID"] = str(uuid4())
-        st.switch_page("pages/1_Personal.py")
+        st.switch_page("pages/1_Agreement.py")
 
     back_button("Home.py")
     st.stop()

@@ -207,7 +207,7 @@ if token and "id_token" in token:
             st.write("Start your registration to join a team and prepare for the event.")
             if st.button("Start New Registration", type="primary"):
                 st.session_state["SessionID"] = str(uuid4())
-                st.switch_page("pages/1_Personal.py")
+                st.switch_page("pages/1_Agreement.py")
         
         with col2:
             st.markdown("#### Sign Up To Volunteer")

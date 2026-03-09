@@ -95,29 +95,8 @@ init_page("Step 1: Personal Details")
 remove_st_branding()
 hide_sidebar()
 
-# -------------------------------------------------------------------
-# Participation Agreement
-# -------------------------------------------------------------------
-st.write("---")
-st.subheader("Participation Agreement")
-st.markdown("""
-To participate you must agree to:
-
-- By signing up as a participant, you will not be able to sign up as a volunteer, so please only sign up for the role that best suits you.
-- Participation is at your own risk  
-- Attendance at DXC briefings prior to event  
-- Mandatory safety briefings at campsite  
-- DXC is not responsible for loss/damage of items  
-- Choose a route within your ability  
-- Raise an individual minimum of **£150**, or a team minimum of **£600** (4 members), or **£750** (5 members) in fundraising  
-""")
-
-agree = st.checkbox("I have read and agree to all the above terms.")
-if not agree:
-    st.warning("You must agree before continuing.")
-    back_button("Home.py")
-    st.stop()
-st.success("✔ Agreement confirmed — continue below.")
+if not st.session_state.get("agreement_confirmed"):
+    st.switch_page("pages/1_Agreement.py")
 
 # -------------------------------------------------------------------
 # Defaults (from draft, not DB)

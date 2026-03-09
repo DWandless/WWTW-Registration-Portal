@@ -103,7 +103,7 @@ st.subheader("Volunteers Agreement")
 st.markdown("""
 By volunteering you must agree to: 
 
-- By signing up as a volunteer, you will not be able to sign up as a participant, so please only sign up for the role that best suits you.
+- You can sign up as both a walker and a volunteer. Some volunteer roles may not be compatible with taking part as a walker.
 - You will be representing DXC whilst volunteering at the event
 - DXC will fund your travel, camping and food and in return we ask you commit to the volunteering
 - Attend any DXC briefing sessions prior to attendance.

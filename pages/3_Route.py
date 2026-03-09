@@ -27,7 +27,7 @@ draft = st.session_state["draft"]
 # Require previous steps
 if not draft.get("full_name"):
     st.warning("Please complete Personal Details first.")
-    st.switch_page("pages/1_Personal.py")
+    st.switch_page("pages/1_Agreement.py")
 
 if "team_id" not in draft:
     st.info("Please confirm Team selection (or choose Independently).")

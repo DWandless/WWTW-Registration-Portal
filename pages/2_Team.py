@@ -62,8 +62,8 @@ draft = st.session_state["draft"]
 
 # Require Step 1
 if not draft.get("full_name"):
-    st.warning("Please complete Personal Details first.")
-    st.switch_page("pages/1_Personal.py")
+    st.warning("Please complete Agreement first.")
+    st.switch_page("pages/1_Agreement.py")
 
 # Load sidebar info
 user_email = (st.session_state.get("user_email", "") or "").strip().lower()
