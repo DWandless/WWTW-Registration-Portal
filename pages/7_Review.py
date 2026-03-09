@@ -46,6 +46,8 @@ st.write("---")
 st.subheader("Review Your Registration")
 st.caption("Check your details below. Use the buttons to edit on the original pages.")
 
+participation_type = (draft.get("participation_type") or "").strip()
+
 # --- Section 1: Personal Details ---
 with st.expander("Personal Details", expanded=True):
     st.write(f"**Name:** {draft.get('full_name')}")
@@ -54,7 +56,6 @@ with st.expander("Personal Details", expanded=True):
     st.write(f"**Organisation:** {draft.get('organisation')}")
     st.write(f"**Mobile:** {draft.get('mobile_number')}")
     st.write(f"**Forces Veteran:** {'Yes' if draft.get('forces_vet') else 'No'}")
-    participation_type = draft.get("participation_type")
     if participation_type:
         st.write(f"**Participation Type:** {participation_type}")
     if participation_type in {"Volunteering", "Both"}:
@@ -70,31 +71,32 @@ with st.expander("Personal Details", expanded=True):
     if st.button("Edit Personal Details"):
         st.switch_page("pages/3_Personal.py")
 
-# --- Section 2: Team Details ---
-with st.expander("Team Details", expanded=True):
-    st.write(f"**Team Name:** {draft.get('team_name') or 'Independent'}")
-    st.write(f"**Team Route:** {draft.get('team_route') or 'Not set'}")
-    st.write(f"**Role:** {draft.get('role') or 'N/A'}")
-    if st.button("Edit Team Details"):
-        st.switch_page("pages/4_Team.py")
+if participation_type != "Volunteering":
+    # --- Section 2: Team Details ---
+    with st.expander("Team Details", expanded=True):
+        st.write(f"**Team Name:** {draft.get('team_name') or 'Independent'}")
+        st.write(f"**Team Route:** {draft.get('team_route') or 'Not set'}")
+        st.write(f"**Role:** {draft.get('role') or 'N/A'}")
+        if st.button("Edit Team Details"):
+            st.switch_page("pages/4_Team.py")
 
-# --- Section 3: Route Preference ---
-with st.expander("Route Preference", expanded=True):
-    st.write(f"**Preferred Route:** {draft.get('preferred_route') or 'Not set'}")
-    if st.button("Edit Route"):
-        st.switch_page("pages/5_Route.py")
+    # --- Section 3: Route Preference ---
+    with st.expander("Route Preference", expanded=True):
+        st.write(f"**Preferred Route:** {draft.get('preferred_route') or 'Not set'}")
+        if st.button("Edit Route"):
+            st.switch_page("pages/5_Route.py")
 
-# --- Section 4: Logistics ---
-with st.expander("Logistics", expanded=True):
-    st.write(f"**Shirt Size:** {draft.get('shirt_size')}")
-    st.write(f"**Camping Friday:** {'Yes' if draft.get('camping_fri') else 'No'}")
-    st.write(f"**Camping Saturday:** {'Yes' if draft.get('camping_sat') else 'No'}")
-    st.write(f"**Taking Car:** {'Yes' if draft.get('taking_car') else 'No'}")
-    st.write(f"**Travelling From:** {draft.get('travelling_from')}")
-    st.write(f"**Notes:** {draft.get('notes')}")
-    st.write(f"**Experience:** {draft.get('hiking_experience')}")
-    if st.button("Edit Logistics"):
-        st.switch_page("pages/6_Logistics.py")
+    # --- Section 4: Logistics ---
+    with st.expander("Logistics", expanded=True):
+        st.write(f"**Shirt Size:** {draft.get('shirt_size')}")
+        st.write(f"**Camping Friday:** {'Yes' if draft.get('camping_fri') else 'No'}")
+        st.write(f"**Camping Saturday:** {'Yes' if draft.get('camping_sat') else 'No'}")
+        st.write(f"**Taking Car:** {'Yes' if draft.get('taking_car') else 'No'}")
+        st.write(f"**Travelling From:** {draft.get('travelling_from')}")
+        st.write(f"**Notes:** {draft.get('notes')}")
+        st.write(f"**Experience:** {draft.get('hiking_experience')}")
+        if st.button("Edit Logistics"):
+            st.switch_page("pages/6_Logistics.py")
 
 
 # ---------------------------------------------------------
@@ -157,4 +159,7 @@ if submit:
         # Unlock submission button
         st.session_state["submission_in_progress"] = False
 
-back_button("pages/6_Logistics.py")
+if participation_type == "Volunteering":
+    back_button("pages/3_Personal.py")
+else:
+    back_button("pages/6_Logistics.py")
