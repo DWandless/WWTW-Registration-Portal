@@ -81,7 +81,7 @@ client = get_authenticated_supabase()
 # Load teams and members
 teams_data = (
     client.table("teams")
-    .select("id, team_name, route, on_waiting_list, officially_registered, members(*)")
+    .select("id, team_name, route, on_waiting_list, officially_registered")
     .eq("on_waiting_list", False)
     .execute()
     .data
@@ -102,8 +102,26 @@ team_name_to_id = {v: k for k, v in team_id_to_name.items()}
 team_options = list(team_name_to_id.keys())
 team_options_with_unassigned = team_options + ["Unassigned"]
 
-all_members = client.table("members").select("*").execute().data or []
+member_select_cols = (
+    "id, team_id, role, full_name, organisation, employee_id, employee_email, mobile_number, "
+    "preferred_route, shirt_size, travelling_from, forces_vet, camping_fri, camping_sat, taking_car, "
+    "hiking_experience, notes, on_waiting_list, dropped_out"
+)
+all_members = client.table("members").select(member_select_cols).execute().data or []
 valid_team_ids = set(team_id_to_name.keys())
+
+active_counts = {}
+for m in all_members:
+    if bool(m.get("on_waiting_list")):
+        continue
+    tid = m.get("team_id")
+    if tid is None:
+        continue
+    if tid not in valid_team_ids:
+        continue
+    active_counts[tid] = active_counts.get(tid, 0) + 1
+
+waiting_members = [m for m in all_members if bool(m.get("on_waiting_list"))]
 
 unassigned_members = [
     m
@@ -115,7 +133,7 @@ unassigned_members = [
 # -----------------------------------------------------
 # Utility: Member Editor Function
 # -----------------------------------------------------
-def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, title, dropdowns):
+def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, title, dropdowns, active_counts):
     if df_members.empty:
         st.info(f"No members to display for {title}.")
         return
@@ -132,25 +150,11 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
 
     df_ids = df_members.copy()
 
-    # Build dynamic Team Name options: include teams that have space (less than 5 active members)
-    # and always include any team present in this dataframe (so current members keep their team).
-    try:
-        active_members = client.table("members").select("team_id").eq("on_waiting_list", False).execute().data or []
-    except Exception:
-        active_members = []
-
-    counts = {}
-    for m in active_members:
-        tid = m.get("team_id")
-        if tid is None:
-            continue
-        counts[tid] = counts.get(tid, 0) + 1
-
     current_team_names = set(df_members["Team Name"].tolist())
 
     available_team_names = []
     for tid, name in team_id_to_name.items():
-        c = counts.get(tid, 0)
+        c = active_counts.get(tid, 0)
         if c < 5 or name in current_team_names:
             available_team_names.append(name)
 
@@ -555,7 +559,15 @@ dropdowns = {
 # -----------------------------------------------------
 # Volunteers
 # -----------------------------------------------------
-volunteers = client.table("volunteers").select('*').eq("on_waiting_list", False).execute().data or []
+volunteer_select_cols = "id, full_name, employee_email, employee_id, mobile_number, area, on_waiting_list"
+volunteers = (
+    client.table("volunteers")
+    .select(volunteer_select_cols)
+    .eq("on_waiting_list", False)
+    .execute()
+    .data
+    or []
+)
 st.markdown("---")
 st.subheader("Volunteers")
 st.caption("Manage volunteers who have signed up to assist with the event.")
@@ -573,7 +585,6 @@ with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
 # -----------------------------------------------------
 # Particpant Waiting List
 # -----------------------------------------------------
-waiting_members = client.table("members").select("*").eq("on_waiting_list", True).execute().data or []
 st.markdown("---")
 st.subheader("Participant Waiting List")
 st.caption("Members added here when the event reaches capacity (200+ active participants). Manage these members below—edit their details or uncheck 'On Waiting List' to move them to active status. Delete members if needed.")
@@ -581,7 +592,7 @@ st.caption("Members added here when the event reaches capacity (200+ active part
 with st.expander(f"Waiting List ({len(waiting_members)})", expanded=False):
     if waiting_members:
         df_wait = members_to_dataframe(waiting_members, team_id_to_name)
-        render_member_editor(df_wait, team_id_to_name, team_name_to_id, client, "Waiting List", dropdowns)
+        render_member_editor(df_wait, team_id_to_name, team_name_to_id, client, "Waiting List", dropdowns, active_counts)
     else:
         st.info("No users are currently on the waiting list.")
 
@@ -595,7 +606,7 @@ st.caption("Participants who registered but are not part of any team. Assign the
 with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
     if unassigned_members:
         df_un = members_to_dataframe(unassigned_members, team_id_to_name)
-        render_member_editor(df_un, team_id_to_name, team_name_to_id, client, "Unassigned", dropdowns)
+        render_member_editor(df_un, team_id_to_name, team_name_to_id, client, "Unassigned", dropdowns, active_counts)
     else:
         st.info("All members are assigned to teams.")
 
@@ -608,14 +619,18 @@ st.subheader("Confirmed Teams & Members")
 st.caption("View and manage all confirmed teams and their members. Edit participant details, reassign members to different teams, or delete entire teams (members will be unassigned). Each team can hold up to 5 members.")
 
 confirmed_team_count = len(teams_data)
-confirmed_member_count = sum(len(t.get("members") or []) for t in teams_data)
+confirmed_member_count = sum(active_counts.values())
 
 c1, c2 = st.columns(2)
 c1.metric("Confirmed Teams", confirmed_team_count)
 c2.metric("Members Assigned to Confirmed Teams", confirmed_member_count)
 
 for team in teams_data:
-    team_members = team.get("members") or []
+    team_members = [
+        m for m in all_members
+        if (m.get("team_id") is not None)
+        and (str(m.get("team_id")) == str(team.get("id")))
+    ]
 
     registration_status = "REGISTERED" if bool(team.get("officially_registered")) else ""
 
@@ -623,7 +638,7 @@ for team in teams_data:
 
         if team_members:
             df_team = members_to_dataframe(team_members, team_id_to_name)
-            render_member_editor(df_team, team_id_to_name, team_name_to_id, client, team["team_name"], dropdowns)
+            render_member_editor(df_team, team_id_to_name, team_name_to_id, client, team["team_name"], dropdowns, active_counts)
         else:
             st.info("No members assigned to this team.")
 
@@ -667,7 +682,7 @@ st.caption("View and manage all teams on the waiting list.")
 
 unassigned_teams_data = (
     client.table("teams")
-    .select("id, team_name, route, on_waiting_list, members(*)")
+    .select("id, team_name, route, on_waiting_list")
     .eq("on_waiting_list", True)
     .execute()
     .data

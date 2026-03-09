@@ -273,7 +273,7 @@ if token and "id_token" in token:
                     st.error("Could not update team registration confirmation.")
                     st.exception(e)
 
-        st.link_button("Register Here", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
+        st.link_button("Register Team Here", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
     elif str(member_data.get("role", "")).strip().lower() == "member":
         st.warning("You have already registered, to update your details & manage your team please navigate to the Update Resistrations page or contact an admin")
