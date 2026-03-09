@@ -583,6 +583,75 @@ def get_active_member_count(client) -> int:
         return 0
 
 
+def get_active_walker_count(client) -> int:
+    """Return the count of active members who are walking (excludes volunteer-only records)."""
+    try:
+        rows = (
+            client.table("members")
+            .select(
+                "id, on_waiting_list, team_id, preferred_route, shirt_size, camping_fri, camping_sat, taking_car, travelling_from, notes, hiking_experience"
+            )
+            .eq("on_waiting_list", False)
+            .execute()
+            .data
+            or []
+        )
+
+        def _is_walker(m: dict) -> bool:
+            if m.get("team_id") is not None:
+                return True
+            if (m.get("preferred_route") or "").strip():
+                return True
+            if (m.get("shirt_size") or "").strip():
+                return True
+            if bool(m.get("camping_fri")) or bool(m.get("camping_sat")):
+                return True
+            if bool(m.get("taking_car")):
+                return True
+            if (m.get("travelling_from") or "").strip():
+                return True
+            if (m.get("notes") or "").strip():
+                return True
+            if (m.get("hiking_experience") or "").strip():
+                return True
+            return False
+
+        return sum(1 for m in rows if _is_walker(m))
+    except Exception:
+        return 0
+
+
+def get_active_on_day_volunteer_count(client, exclude_member_id: str | None = None) -> int:
+    try:
+        rows = (
+            client.table("members")
+            .select("id, on_waiting_list, volunteering_area")
+            .eq("on_waiting_list", False)
+            .execute()
+            .data
+            or []
+        )
+
+        on_day_tokens = {
+            "Setting up the DXC tent and Merch distrubition",
+            "Participant support on the day",
+        }
+
+        count = 0
+        for r in rows:
+            rid = str(r.get("id"))
+            if exclude_member_id is not None and rid == str(exclude_member_id):
+                continue
+            areas_text = (r.get("volunteering_area") or "").strip()
+            if not areas_text:
+                continue
+            if any(t in areas_text for t in on_day_tokens):
+                count += 1
+        return count
+    except Exception:
+        return 0
+
+
 def prepare_member_record(draft: dict, on_waiting_list: bool | None = None, client=None) -> dict:
     """
     Creates a sanitized DB-ready member record from the session draft.

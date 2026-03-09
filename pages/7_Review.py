@@ -1,6 +1,6 @@
 # pages/5_Review.py
 import streamlit as st
-from helpers import init_page, get_authenticated_supabase, prepare_member_record, hide_sidebar, back_button, remove_st_branding
+from helpers import init_page, get_authenticated_supabase, prepare_member_record, hide_sidebar, back_button, remove_st_branding, get_active_on_day_volunteer_count
 
 init_page("Step 7: Review & Submit")
 
@@ -125,9 +125,6 @@ if submit:
         # Record this attempt timestamp
         st.session_state["last_submit_time"] = time.time()
 
-        # Prepare and sanitize final record
-        final_record = prepare_member_record(draft, False, client)
-
         # Check existing user
         employee_email = draft.get("employee_email", "").lower()
         existing = (
@@ -137,6 +134,31 @@ if submit:
             .execute()
         )
         existing_member = existing.data[0] if existing.data else None
+
+        # On-the-day volunteer cap
+        on_day_tokens = {
+            "Setting up the DXC tent and Merch distrubition",
+            "Participant support on the day",
+        }
+        volunteering_areas = draft.get("volunteering_area_selection")
+        if isinstance(volunteering_areas, list):
+            volunteering_areas_text = ", ".join([a for a in volunteering_areas if str(a).strip()])
+        else:
+            volunteering_areas_text = ""
+        if not volunteering_areas_text:
+            volunteering_areas_text = draft.get("volunteering_area") or ""
+
+        wants_on_day = any(t in (volunteering_areas_text or "") for t in on_day_tokens)
+        exclude_id = str(existing_member.get("id")) if existing_member else None
+        current_on_day_count = get_active_on_day_volunteer_count(client, exclude_member_id=exclude_id)
+
+        on_waiting_list = False
+        if wants_on_day and current_on_day_count >= 20:
+            on_waiting_list = True
+            st.info("On-the-day volunteer roles are currently full. You have been placed on the waiting list.")
+
+        # Prepare and sanitize final record
+        final_record = prepare_member_record(draft, on_waiting_list, client)
 
         # Insert or update
         if existing_member is None:

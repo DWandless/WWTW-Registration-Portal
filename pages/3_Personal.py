@@ -7,7 +7,7 @@ from helpers import (
     get_authenticated_supabase,
     prepare_member_record,
     hide_sidebar,
-    get_active_member_count,
+    get_active_walker_count,
     sanitize_text,
     remove_st_branding,
 )
@@ -140,7 +140,7 @@ except Exception:
     pass
 
 # Check if event is full
-current_count = get_active_member_count(client)
+current_count = get_active_walker_count(client)
 event_is_full = current_count >= 150
 
 if event_is_full:
