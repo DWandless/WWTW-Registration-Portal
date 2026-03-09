@@ -209,12 +209,9 @@ if is_volunteer_only:
     )
 
     if st.button("Save Volunteer Areas", key="save_volunteer_areas_volunteer_only"):
-        if not selected_areas:
-            st.error("Please select at least one volunteer area.")
-            st.stop()
-
         try:
-            client.table("members").update({"volunteering_area": ", ".join(selected_areas)}).eq("id", current_user.get("id")).execute()
+            updated_value = ", ".join(selected_areas) if selected_areas else None
+            client.table("members").update({"volunteering_area": updated_value}).eq("id", current_user.get("id")).execute()
             st.success("Saved.")
             st.rerun()
         except Exception as e:
@@ -313,12 +310,9 @@ if walking_fields_present and not is_volunteer_only:
     )
 
     if st.button("Save Volunteer Areas", key="save_volunteer_areas_both"):
-        if not selected_areas:
-            st.error("Please select at least one volunteer area.")
-            st.stop()
-
         try:
-            client.table("members").update({"volunteering_area": ", ".join(selected_areas)}).eq("id", current_user.get("id")).execute()
+            updated_value = ", ".join(selected_areas) if selected_areas else None
+            client.table("members").update({"volunteering_area": updated_value}).eq("id", current_user.get("id")).execute()
             st.success("Saved.")
             st.rerun()
         except Exception as e:
