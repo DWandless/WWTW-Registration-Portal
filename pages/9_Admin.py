@@ -142,6 +142,14 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
         st.info(f"No members to display for {title}.")
         return
 
+    df_members = df_members.copy()
+    if "Team Name" in df_members.columns:
+        df_members["Team Name"] = (
+            df_members["Team Name"]
+            .fillna("Unassigned")
+            .apply(lambda x: "Unassigned" if str(x).strip() == "" else x)
+        )
+
     # Clear any stale pending delete state for this section
     pending_key = f"pending_delete_{title}"
     if pending_key in st.session_state and st.session_state[pending_key] is not None:
@@ -158,6 +166,8 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
 
     available_team_names = []
     for tid, name in team_id_to_name.items():
+        if not str(name or "").strip():
+            continue
         c = active_counts.get(tid, 0)
         if c < 5 or name in current_team_names:
             available_team_names.append(name)
@@ -165,6 +175,11 @@ def render_member_editor(df_members, team_id_to_name, team_name_to_id, client, t
     # Ensure Unassigned is always present and no null/None option appears
     if "Unassigned" not in available_team_names:
         available_team_names.append("Unassigned")
+
+    available_team_names = [
+        "Unassigned",
+        *sorted([n for n in available_team_names if n != "Unassigned"]),
+    ]
 
     # Make a local copy of dropdowns and override Team Name options
     local_dropdowns = dropdowns.copy()
