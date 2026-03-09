@@ -190,7 +190,7 @@ if token and "id_token" in token:
     client = get_authenticated_supabase()
     member_result = (
         client.table("members")
-        .select("id, role")
+        .select("id, role, team_id")
         .eq("employee_email", user_email.lower())
         .execute()
     )
@@ -218,7 +218,59 @@ if token and "id_token" in token:
     elif str(member_data.get("role", "")).strip().lower() == "leader":
         # User is a Leader - show WWTW link
         st.markdown("#### Please make sure to register your team on the official Walking with the Wounded site.")
-        st.write("Use the relevant code depending on what route your team is taking: DXCPEAK100, DXCTOUGH100, DXCTOUGHER100. ")
+
+        registration_code = None
+        team_route = None
+        officially_registered = False
+        try:
+            team_id = member_data.get("team_id")
+            if team_id:
+                team_rows = (
+                    client.table("teams")
+                    .select("route, officially_registered")
+                    .eq("id", team_id)
+                    .limit(1)
+                    .execute()
+                    .data
+                    or []
+                )
+                if team_rows:
+                    team_route = team_rows[0].get("route")
+                    officially_registered = bool(team_rows[0].get("officially_registered"))
+
+            route_to_code = {
+                "Peak": "DXCPEAK100",
+                "Tough": "DXCTOUGH100",
+                "Tougher": "DXCTOUGHER100",
+            }
+            registration_code = route_to_code.get(team_route)
+        except Exception:
+            registration_code = None
+
+        if registration_code:
+            st.write(f"Use this code for your team's route: {registration_code}")
+        else:
+            st.write("Your team registration code is not available yet. Please ensure your team route has been set.")
+
+        if member_data.get("team_id"):
+            checkbox_key = f"officially_registered_{member_data.get('team_id')}"
+            if checkbox_key not in st.session_state:
+                st.session_state[checkbox_key] = officially_registered
+
+            confirmed = st.checkbox(
+                "I confirm I have registered my team on the official Walking With The Wounded website",
+                key=checkbox_key,
+            )
+
+            if bool(confirmed) != bool(officially_registered):
+                try:
+                    client.table("teams").update({"officially_registered": bool(confirmed)}).eq("id", member_data.get("team_id")).execute()
+                    st.success("Updated team registration confirmation.")
+                    st.rerun()
+                except Exception as e:
+                    st.error("Could not update team registration confirmation.")
+                    st.exception(e)
+
         st.link_button("Visit WWTW", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
     elif str(member_data.get("role", "")).strip().lower() == "member":

@@ -81,7 +81,7 @@ client = get_authenticated_supabase()
 # Load teams and members
 teams_data = (
     client.table("teams")
-    .select("id, team_name, route, on_waiting_list, members(*)")
+    .select("id, team_name, route, on_waiting_list, officially_registered, members(*)")
     .eq("on_waiting_list", False)
     .execute()
     .data
@@ -617,7 +617,9 @@ c2.metric("Members Assigned to Confirmed Teams", confirmed_member_count)
 for team in teams_data:
     team_members = team.get("members") or []
 
-    with st.expander(f"{team['team_name']} — Route: {team.get('route','')} ({len(team_members)}/5 Members)"):
+    registration_status = "REGISTERED" if bool(team.get("officially_registered")) else "NOT REGISTERED"
+
+    with st.expander(f"{team['team_name']} — Route: {team.get('route','')} — {registration_status} ({len(team_members)}/5 Members)"):
 
         if team_members:
             df_team = members_to_dataframe(team_members, team_id_to_name)
