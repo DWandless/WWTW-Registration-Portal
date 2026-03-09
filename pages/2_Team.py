@@ -65,6 +65,10 @@ if not draft.get("full_name"):
     st.warning("Please complete Agreement first.")
     st.switch_page("pages/1_Agreement.py")
 
+participation_type = (draft.get("participation_type") or "").strip()
+if participation_type == "Volunteering":
+    st.switch_page("pages/5_Review.py")
+
 # Load sidebar info
 user_email = (st.session_state.get("user_email", "") or "").strip().lower()
 user_name = (st.session_state.get("user_name", "") or "").strip()

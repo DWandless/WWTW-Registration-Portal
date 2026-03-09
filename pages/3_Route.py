@@ -29,6 +29,10 @@ if not draft.get("full_name"):
     st.warning("Please complete Personal Details first.")
     st.switch_page("pages/1_Agreement.py")
 
+participation_type = (draft.get("participation_type") or "").strip()
+if participation_type == "Volunteering":
+    st.switch_page("pages/5_Review.py")
+
 if "team_id" not in draft:
     st.info("Please confirm Team selection (or choose Independently).")
     st.switch_page("pages/2_Team.py")

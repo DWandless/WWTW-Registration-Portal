@@ -47,6 +47,16 @@ def validate_logistics(travelling_from: str, notes: str, experience: str, requir
 st.session_state.setdefault("SessionID", str(uuid4()))
 draft = st.session_state.setdefault("draft", {})
 
+if not st.session_state.get("agreement_confirmed"):
+    st.switch_page("pages/1_Agreement.py")
+
+participation_type = (draft.get("participation_type") or "").strip()
+if participation_type not in {"Walking", "Volunteering", "Both"}:
+    st.switch_page("pages/2_Participation.py")
+
+if participation_type == "Volunteering":
+    st.switch_page("pages/5_Review.py")
+
 user_email = (st.session_state.get("user_email", "") or "").lower()
 user_name = (st.session_state.get("user_name", "") or "").strip()
 

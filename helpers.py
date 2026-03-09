@@ -414,8 +414,8 @@ def export_excel(client):
 
 
 def export_volunteers_excel(client):
-    volunteers = (
-        client.table("volunteers")
+    members = (
+        client.table("members")
         .select("*")
         .execute()
         .data
@@ -446,20 +446,20 @@ def export_volunteers_excel(client):
         ws.append(HEADERS)
         _style_worksheet(ws)
 
-        # Filter volunteers who selected this area
-        for v in volunteers:
+        # Filter members who selected this area
+        for m in members:
             area_list = [
                 a.strip()
-                for a in (v.get("area") or "").split(",")
+                for a in (m.get("volunteering_area") or "").split(",")
                 if a.strip()
             ]
 
             if area in area_list:
                 ws.append([
-                    v.get("full_name", ""),
-                    v.get("employee_email", ""),
-                    v.get("employee_id", ""),
-                    v.get("mobile_number", ""),
+                    m.get("full_name", ""),
+                    m.get("employee_email", ""),
+                    m.get("employee_id", ""),
+                    m.get("mobile_number", ""),
                 ])
 
         _style_worksheet(ws)
@@ -597,7 +597,7 @@ def prepare_member_record(draft: dict, on_waiting_list: bool | None = None, clie
         "team_id", "preferred_route", "role",
         "shirt_size", "forces_vet", "camping_fri", "camping_sat",
         "taking_car", "travelling_from", "notes", "hiking_experience",
-        "mobile_number", "organisation", "on_waiting_list", "dropped_out", "area"
+        "mobile_number", "organisation", "on_waiting_list", "dropped_out", "volunteering_area"
     }
 
     record = {}

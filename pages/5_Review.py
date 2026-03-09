@@ -54,6 +54,19 @@ with st.expander("Personal Details", expanded=True):
     st.write(f"**Organisation:** {draft.get('organisation')}")
     st.write(f"**Mobile:** {draft.get('mobile_number')}")
     st.write(f"**Forces Veteran:** {'Yes' if draft.get('forces_vet') else 'No'}")
+    participation_type = draft.get("participation_type")
+    if participation_type:
+        st.write(f"**Participation Type:** {participation_type}")
+    if participation_type in {"Volunteering", "Both"}:
+        volunteering_areas = draft.get("volunteering_area_selection")
+        if isinstance(volunteering_areas, list):
+            volunteering_areas_text = ", ".join([a for a in volunteering_areas if str(a).strip()])
+        else:
+            volunteering_areas_text = ""
+        if not volunteering_areas_text:
+            volunteering_areas_text = draft.get("volunteering_area") or ""
+        if volunteering_areas_text:
+            st.write(f"**Volunteering Area:** {volunteering_areas_text}")
     if st.button("Edit Personal Details"):
         st.switch_page("pages/1_Personal.py")
 

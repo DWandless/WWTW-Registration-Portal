@@ -98,6 +98,10 @@ hide_sidebar()
 if not st.session_state.get("agreement_confirmed"):
     st.switch_page("pages/1_Agreement.py")
 
+participation_type = (draft.get("participation_type") or "").strip()
+if participation_type not in {"Walking", "Volunteering", "Both"}:
+    st.switch_page("pages/2_Participation.py")
+
 # -------------------------------------------------------------------
 # Defaults (from draft, not DB)
 # -------------------------------------------------------------------
@@ -233,6 +237,9 @@ if submitted:
     else:
         # Event not full OR active user
         st.success("Personal details saved!")
-        st.switch_page("pages/2_Team.py")
+        if participation_type == "Volunteering":
+            st.switch_page("pages/5_Review.py")
+        else:
+            st.switch_page("pages/2_Team.py")
 
 back_button("Home.py")

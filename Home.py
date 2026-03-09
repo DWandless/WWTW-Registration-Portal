@@ -199,22 +199,12 @@ if token and "id_token" in token:
    
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
-        # User not registered - show registration and volunteer buttons
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("#### Register Here")
-            st.write("Start your registration to join a team and prepare for the event.")
-            if st.button("Start New Registration", type="primary"):
-                st.session_state["SessionID"] = str(uuid4())
-                st.switch_page("pages/1_Agreement.py")
-        
-        with col2:
-            st.markdown("#### Sign Up To Volunteer")
-            st.write("Volunteer to help out at the event.")
-            if st.button("Volunteer Registration", type="primary"):
-                st.session_state["SessionID"] = str(uuid4())
-                st.switch_page("pages/9_Volunteers.py")
+        # User not registered - show registration button
+        st.markdown("#### Register Here")
+        st.write("Start your registration to join a team, volunteer, or both.")
+        if st.button("Start New Registration", type="primary"):
+            st.session_state["SessionID"] = str(uuid4())
+            st.switch_page("pages/1_Agreement.py")
     elif str(member_data.get("role", "")).strip().lower() == "leader":
         # User is a Leader - show WWTW link
         st.markdown("#### Please make sure to register your team on the official Walking with the Wounded site.")

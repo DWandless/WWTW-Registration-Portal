@@ -47,5 +47,5 @@ if not agree:
 st.session_state["agreement_confirmed"] = True
 st.success("✔ Agreement confirmed — continue below.")
 
-if st.button("Continue to Personal Details →", type="primary"):
-    st.switch_page("pages/1_Personal.py")
+if st.button("Continue →", type="primary"):
+    st.switch_page("pages/2_Participation.py")

@@ -90,15 +90,8 @@ teams_data = (
 
 team_id_to_name = {t["id"]: t["team_name"] for t in teams_data}
 
-volunteer_dropdowns = {
-    "Full Name": st.column_config.TextColumn("Full Name"),
-    "Employee Email": st.column_config.TextColumn("Employee Email"),
-    "Employee ID": st.column_config.TextColumn("Employee ID"),
-    "Mobile Number": st.column_config.TextColumn("Mobile Number"),
-    "Area": st.column_config.TextColumn("Area"),
-    "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
-}
 team_name_to_id = {v: k for k, v in team_id_to_name.items()}
+
 team_options = list(team_name_to_id.keys())
 team_options_with_unassigned = team_options + ["Unassigned"]
 
@@ -375,162 +368,6 @@ def render_team_editor(df_teams, client, title, dropdowns, disabled_columns=None
 
     st.markdown("---")
 
-
-def volunteers_to_dataframe(volunteers):
-    df = pd.DataFrame([
-        {
-            "id": str(v.get("id")),
-            "Full Name": v.get("full_name"),
-            "Employee Email": v.get("employee_email"),
-            "Employee ID": v.get("employee_id"),
-            "Mobile Number": v.get("mobile_number"),
-            "Area": v.get("area"),
-            "On Waiting List": bool(v.get("on_waiting_list")),
-        }
-        for v in (volunteers or [])
-    ])
-    return df
-
-
-VOLUNTEER_COLUMN_MAP = {
-    "Full Name": "full_name",
-    "Employee Email": "employee_email",
-    "Employee ID": "employee_id",
-    "Mobile Number": "mobile_number",
-    "Area": "area",
-    "On Waiting List": "on_waiting_list",
-}
-
-
-def apply_volunteer_updates(edited_df, original_df, client):
-    if edited_df is None or edited_df.empty:
-        return 0
-
-    updates = 0
-
-    original_df = original_df.copy()
-    edited_df = edited_df.copy()
-    original_df["id"] = original_df["id"].astype(str)
-    edited_df["id"] = edited_df["id"].astype(str)
-
-    for _, row in edited_df.iterrows():
-        volunteer_id = row["id"]
-        orig_rows = original_df[original_df["id"] == volunteer_id]
-        if orig_rows.empty:
-            continue
-        orig = orig_rows.iloc[0]
-
-        changes = {}
-        for col, new_val in row.items():
-            if col == "id":
-                continue
-
-            old_val = orig[col]
-            db_col = VOLUNTEER_COLUMN_MAP.get(col)
-            if not db_col:
-                continue
-
-            if db_col == "on_waiting_list":
-                new_val = bool(new_val)
-                old_val = bool(old_val)
-
-            if new_val != old_val:
-                changes[db_col] = new_val
-
-        if changes:
-            try:
-                client.table("volunteers").update(changes).eq("id", volunteer_id).execute()
-                updates += 1
-            except Exception as e:
-                st.error(f"Failed to update volunteer {volunteer_id}.")
-                st.exception(e)
-
-    return updates
-
-
-def delete_volunteer(volunteer_id: str, client):
-    try:
-        client.table("volunteers").delete().eq("id", volunteer_id).execute()
-        st.success("Volunteer deleted.")
-        st.rerun()
-    except Exception as e:
-        st.error("Failed to delete volunteer.")
-        st.exception(e)
-
-
-def render_volunteer_editor(df_volunteers, client, title, dropdowns):
-    if df_volunteers.empty:
-        st.info(f"No volunteers to display for {title}.")
-        return
-
-    pending_key = f"pending_delete_{title}"
-    if pending_key in st.session_state and st.session_state[pending_key] is not None:
-        volunteer_id_str = str(st.session_state[pending_key])
-        if not any(df_volunteers["id"] == volunteer_id_str):
-            st.session_state[pending_key] = None
-            st.session_state.pop(f"delete_select_{title}", None)
-
-    df_ids = df_volunteers.copy()
-
-    edited = st.data_editor(
-        df_volunteers.drop(columns=["id"]),
-        width="stretch",
-        num_rows="fixed",
-        hide_index=True,
-        column_config=dropdowns,
-        key=f"editor_{title}",
-    )
-
-    edited["id"] = df_ids["id"]
-
-    applied = apply_volunteer_updates(edited, df_ids, client)
-    if applied > 0:
-        st.success(f"Applied {applied} update(s).")
-        st.rerun()
-
-    volunteer_options = {
-        f"{row['Full Name']} — {row['Employee Email']}": row["id"]
-        for _, row in df_volunteers.iterrows()
-    }
-
-    st.markdown("**Delete Volunteer:**")
-    cols = st.columns([3, 1])
-
-    with cols[0]:
-        selected = st.selectbox(
-            "Select volunteer to delete",
-            list(volunteer_options.keys()),
-            key=f"delete_select_{title}",
-            label_visibility="collapsed",
-        )
-
-    with cols[1]:
-        if st.button("⌦ Delete", key=f"delete_btn_{title}", use_container_width=True):
-            st.session_state[pending_key] = volunteer_options[selected]
-
-    if st.session_state.get(pending_key):
-        volunteer_id_str = str(st.session_state[pending_key])
-        matching_rows = df_volunteers[df_volunteers["id"] == volunteer_id_str]
-        volunteer_name = matching_rows["Full Name"].values[0] if not matching_rows.empty else "Volunteer"
-
-        st.error(f"⚠︎ Delete '{volunteer_name}'?")
-        confirm_cols = st.columns([1, 1, 2])
-
-        with confirm_cols[0]:
-            if st.button("✔ Confirm", key=f"confirm_delete_yes_{title}", use_container_width=True):
-                delete_volunteer(st.session_state[pending_key], client)
-                st.session_state[pending_key] = None
-                st.session_state.pop(f"delete_select_{title}", None)
-                st.rerun()
-
-        with confirm_cols[1]:
-            if st.button("✖ Cancel", key=f"confirm_delete_no_{title}", use_container_width=True):
-                st.session_state[pending_key] = None
-                st.session_state.pop(f"delete_select_{title}", None)
-                st.rerun()
-
-    st.markdown("---")
-
 # -----------------------------------------------------
 # Dropdown Config
 # -----------------------------------------------------
@@ -555,32 +392,6 @@ dropdowns = {
     "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
     
 }
-
-# -----------------------------------------------------
-# Volunteers
-# -----------------------------------------------------
-volunteer_select_cols = "id, full_name, employee_email, employee_id, mobile_number, area, on_waiting_list"
-volunteers = (
-    client.table("volunteers")
-    .select(volunteer_select_cols)
-    .eq("on_waiting_list", False)
-    .execute()
-    .data
-    or []
-)
-st.markdown("---")
-st.subheader("Volunteers")
-st.caption("Manage volunteers who have signed up to assist with the event.")
-
-with st.expander(f"Volunteers ({len(volunteers)})", expanded=False):
-    if volunteers:
-        df_vol = volunteers_to_dataframe(volunteers)
-        render_volunteer_editor(df_vol, client, "Volunteers", volunteer_dropdowns)
-    else:
-        st.info("No volunteers have signed up yet.")
-
-
-
 
 # -----------------------------------------------------
 # Particpant Waiting List
