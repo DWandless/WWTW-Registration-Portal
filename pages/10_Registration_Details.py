@@ -77,7 +77,7 @@ _current_user_rows = (
     .select(
         "id, team_id, role, full_name, employee_email, employee_id, mobile_number, organisation, "
         "preferred_route, shirt_size, forces_vet, camping_fri, camping_sat, taking_car, travelling_from, "
-        "notes, hiking_experience, on_waiting_list, dropped_out"
+        "notes, hiking_experience, on_waiting_list, dropped_out, volunteering_area"
     )
     .eq("employee_email", user_email)
     .limit(1)
@@ -107,6 +107,25 @@ st.write("---")
 st.markdown("### Your Registration")
 st.caption("View and update your individual registration details below.")
 
+volunteering_area_text = (current_user.get("volunteering_area") or "").strip()
+has_volunteering = bool(volunteering_area_text)
+
+walking_fields_present = any(
+    (current_user.get(k) not in [None, "", False])
+    for k in [
+        "preferred_route",
+        "shirt_size",
+        "camping_fri",
+        "camping_sat",
+        "taking_car",
+        "travelling_from",
+        "notes",
+        "hiking_experience",
+    ]
+)
+
+is_volunteer_only = has_volunteering and not walking_fields_present and not current_user.get("team_id")
+
 team_id = current_user.get("team_id")
 
 team_lookup = {}
@@ -130,6 +149,77 @@ if team_id:
         team_name_to_id = {team.get("team_name"): team_id}
 
 df_self = members_to_dataframe([current_user], team_lookup)
+
+if is_volunteer_only:
+    st.write("---")
+    st.subheader("Volunteer Details")
+
+    AREA_OPTIONS = [
+        "Communications and Marketing (including Getting our Walkers Challenge Ready!)",
+        "Pre-Event Organisation",
+        "Merchandise Support (Source, Design, and Order)",
+        "Setting up the DXC tent and Merch distrubition",
+        "Participant support on the day",
+    ]
+
+    current_selected = [
+        a.strip() for a in volunteering_area_text.split(",") if a.strip()
+    ]
+    current_selected = [a for a in current_selected if a in AREA_OPTIONS]
+
+    with st.form("volunteer_only_form"):
+        employee_id_val = st.text_input(
+            "Employee ID",
+            value=str(current_user.get("employee_id") or ""),
+        )
+        mobile_number_val = st.text_input(
+            "Mobile Number",
+            value=str(current_user.get("mobile_number") or ""),
+        )
+        organisation_val = st.selectbox(
+            "Organisation",
+            options=["L-ES", "L-CSC", "Velonetic", "CSC"],
+            index=["L-ES", "L-CSC", "Velonetic", "CSC"].index(
+                current_user.get("organisation")
+            )
+            if current_user.get("organisation") in ["L-ES", "L-CSC", "Velonetic", "CSC"]
+            else 0,
+        )
+        forces_vet_val = st.checkbox(
+            "Forces Veteran",
+            value=bool(current_user.get("forces_vet")),
+        )
+        selected_areas = st.multiselect(
+            "Volunteer Area",
+            AREA_OPTIONS,
+            default=current_selected,
+        )
+
+        save = st.form_submit_button("Save")
+
+    if save:
+        if not selected_areas:
+            st.error("Please select at least one volunteer area.")
+            st.stop()
+
+        updates = {
+            "employee_id": sanitize_text(employee_id_val),
+            "mobile_number": sanitize_text(mobile_number_val) or None,
+            "organisation": organisation_val,
+            "forces_vet": bool(forces_vet_val),
+            "volunteering_area": ", ".join(selected_areas),
+        }
+
+        try:
+            client.table("members").update(updates).eq("id", current_user.get("id")).execute()
+            st.success("Saved.")
+            st.rerun()
+        except Exception as e:
+            st.error("Could not save your details.")
+            st.exception(e)
+
+    back_button("Home.py")
+    st.stop()
 
 self_visible_columns = [
     "Team Name",

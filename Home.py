@@ -190,13 +190,16 @@ if token and "id_token" in token:
     client = get_authenticated_supabase()
     member_result = (
         client.table("members")
-        .select("id, role, team_id")
+        .select("id, role, team_id, volunteering_area")
         .eq("employee_email", user_email.lower())
         .execute()
     )
     member_data = member_result.data[0] if member_result.data else None
     
    
+    if member_data and (member_data.get("volunteering_area") or "").strip():
+        st.info("You have signed up to be a volunteer for this years event, thank you!")
+
     # ---- Split Layout: New vs Existing ----
     if member_data is None:
         # User not registered - show registration button
@@ -266,7 +269,7 @@ if token and "id_token" in token:
         st.link_button("Register Team Here", "https://cumbrian-challenge.walkingwiththewounded.org.uk/users/sign_up", type="primary")
 
     elif str(member_data.get("role", "")).strip().lower() == "member":
-        st.warning("You have already registered, to update your details & manage your team please navigate to the Update Resistrations page or contact an admin")
+        st.info("You have already registered, to update your details & manage your team please navigate to the Update Resistrations page or contact an admin")
 
     st.divider()
     
