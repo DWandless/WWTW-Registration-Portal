@@ -298,6 +298,8 @@ if has_volunteering and walking_fields_present and not is_volunteer_only:
     st.write("---")
     st.subheader("Volunteer Areas")
 
+    st.caption("You have signed up as a volunteer, please select & update which area's you would be happy to support with:")
+
     current_selected = [a.strip() for a in volunteering_area_text.split(",") if a.strip()]
     current_selected = [a for a in current_selected if a in VOLUNTEER_AREA_OPTIONS_BOTH]
 
