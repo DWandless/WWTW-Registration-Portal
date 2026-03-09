@@ -42,15 +42,25 @@ AREA_OPTIONS = [
     "Participant support on the day",
 ]
 
+BOTH_EXCLUDED_AREAS = {
+    "Setting up the DXC tent and Merch distrubition",
+    "Participant support on the day",
+}
+
 selected_areas = []
 if participation_type in {"Volunteering", "Both"}:
     prior = draft.get("volunteering_area_selection")
     if not isinstance(prior, list):
         prior = []
 
+    area_options = AREA_OPTIONS
+    if participation_type == "Both":
+        area_options = [a for a in AREA_OPTIONS if a not in BOTH_EXCLUDED_AREAS]
+        prior = [a for a in prior if a in area_options]
+
     selected_areas = st.multiselect(
         "Volunteer Area",
-        AREA_OPTIONS,
+        area_options,
         default=prior,
     )
 
