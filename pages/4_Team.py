@@ -107,15 +107,6 @@ def count_team_members(client, teams):
         pass
     return team_member_counts
 
-def create_team(client, team_name: str, route: str):
-
-    if team_cap_reached:
-        insert_res = client.table("teams").insert({"team_name": team_name, "route": route, "on_waiting_list": True}).execute()
-    else:
-        insert_res = client.table("teams").insert({"team_name": team_name, "route": route, "on_waiting_list": False}).execute()
-    created = insert_res.data[0]
-    return {"id": created.get("id"), "team_name": team_name, "route": route}
-
 
 # -------------------------------------------------------
 # Load teams
@@ -177,6 +168,7 @@ if choice == "Continue Independently":
 
     if st.button("Confirm Independent Participation"):
         draft.update({
+            "team_action": "independent",
             "team_id": None,
             "team_name": None,
             "team_route": None,
@@ -246,6 +238,7 @@ Members: **{count}**
                         st.stop()
 
                     draft.update({
+                        "team_action": "join",
                         "team_id": tid,
                         "team_name": tn,
                         "team_route": tr,
@@ -288,19 +281,16 @@ elif choice == "Create a Team":
             st.stop()
 
         try:
-            new_team = create_team(client, new_name, new_route)
-            teams.append(new_team)
-            st.session_state["teams"] = teams
-
             draft.update({
-                "team_id": new_team["id"],
+                "team_action": "create",
+                "team_id": None,
                 "team_name": new_name,
                 "team_route": new_route,
                 "role": "Leader",
             })
             st.session_state["draft"] = draft
 
-            st.success("Team created!")
+            st.success("Team details saved. Your team will be created when you submit your registration.")
             st.switch_page("pages/5_Route.py")
 
         except Exception as e:

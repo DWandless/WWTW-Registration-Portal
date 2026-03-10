@@ -135,6 +135,43 @@ if submit:
         )
         existing_member = existing.data[0] if existing.data else None
 
+        # Deferred team creation (avoid orphan teams from incomplete registrations)
+        if (draft.get("team_action") == "create") and (draft.get("team_id") is None):
+            team_name = (draft.get("team_name") or "").strip()
+            team_route = (draft.get("team_route") or "").strip()
+            if not team_name or not team_route:
+                st.error("Team details are missing. Please return to the Team step.")
+                st.stop()
+
+            dup = (
+                client.table("teams")
+                .select("id")
+                .eq("team_name", team_name)
+                .limit(1)
+                .execute()
+            )
+            if dup.data:
+                st.error("A team with that name already exists. Please return to the Team step and choose another name.")
+                st.stop()
+
+            MAX_TEAMS = 33
+            team_count_res = client.table("teams").select("id", count="exact").execute()
+            team_cap_reached = (team_count_res.count or 0) >= MAX_TEAMS
+
+            insert_res = client.table("teams").insert({
+                "team_name": team_name,
+                "route": team_route,
+                "on_waiting_list": bool(team_cap_reached),
+            }).execute()
+
+            created_team = insert_res.data[0] if insert_res.data else None
+            if not created_team or not created_team.get("id"):
+                st.error("Could not create the team. Please try again.")
+                st.stop()
+
+            draft["team_id"] = created_team.get("id")
+            st.session_state["draft"] = draft
+
         # On-the-day volunteer cap
         on_day_tokens = {
             "Setting up the DXC tent and Merch distrubition",
