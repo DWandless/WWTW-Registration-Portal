@@ -134,7 +134,7 @@ if team_ids:
     except Exception:
         team_leader_by_id = {}
 
-MAX_TEAMS = 34
+MAX_TEAMS = 33
 team_cap_reached = len(teams) >= MAX_TEAMS
 
 # -------------------------------------------------------
