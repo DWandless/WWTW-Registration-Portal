@@ -359,60 +359,6 @@ def export_excel(client):
     buffer.seek(0)
     return buffer
 
-# # -------------------------------------------------------------------
-# # Volunteers Excel Export
-# # -------------------------------------------------------------------
-
-# def export_volunteers_excel(client):
-#     volunteers = (
-#         client.table("volunteers")
-#         .select("*")
-#         .execute()
-#         .data
-#         or []
-#     )
-
-#     wb = Workbook()
-#     ws = wb.active
-#     ws.title = "Volunteers"
-
-#     HEADERS = [
-#         "Full Name",
-#         "Email",
-#         "Employee ID",
-#         "Mobile Number",
-#         "Volunteer Area",
-#     ]
-
-#     ws.append(HEADERS)
-#     _style_worksheet(ws)
-
-#     # Optional: sort volunteers (active first, then name)
-#     sorted_volunteers = sorted(
-#         volunteers,
-#         key=lambda v: (
-#             bool(v.get("on_waiting_list", False)),  # False (active) first
-#             v.get("full_name", "").lower(),
-#         )
-#     )
-
-#     for v in sorted_volunteers:
-#         ws.append([
-#             v.get("full_name", ""),
-#             v.get("employee_email", ""),
-#             v.get("employee_id", ""),
-#             v.get("mobile_number", ""),
-#             v.get("area", ""),
-            
-#         ])
-
-#     _style_worksheet(ws)
-#     ws.freeze_panes = "A2"
-
-#     buffer = BytesIO()
-#     wb.save(buffer)
-#     buffer.seek(0)
-#     return buffer
 
 
 def export_volunteers_excel(client):
@@ -617,6 +563,28 @@ def get_active_walker_count(client) -> int:
             return False
 
         return sum(1 for m in rows if _is_walker(m))
+    except Exception:
+        return 0
+
+
+def get_active_volunteer_count(client) -> int:
+    """Return the count of active members who are volunteering (excludes waiting list)."""
+    try:
+        rows = (
+            client.table("members")
+            .select("id, on_waiting_list, volunteering_area")
+            .eq("on_waiting_list", False)
+            .execute()
+            .data
+            or []
+        )
+
+        count = 0
+        for r in rows:
+            areas_text = (r.get("volunteering_area") or "").strip()
+            if areas_text:
+                count += 1
+        return count
     except Exception:
         return 0
 

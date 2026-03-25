@@ -8,6 +8,7 @@ from helpers import (
     prepare_member_record,
     hide_sidebar,
     get_active_walker_count,
+    get_active_volunteer_count,
     sanitize_text,
     remove_st_branding,
 )
@@ -139,15 +140,26 @@ try:
 except Exception:
     pass
 
-# Check if event is full
-current_count = get_active_walker_count(client)
-event_is_full = current_count >= 165 # This is MAX number of hikers allowed and should always be 5 * MAX_TEAMS
+# Check if event is full for either hikers or volunteers - SET CAPACITY HERE
+current_hiker_count = get_active_walker_count(client)
+hiker_capacity_reached = current_hiker_count >= 165 # This is MAX number of hikers allowed and should always be 5 * MAX_TEAMS
+
+# Check if volunteer capacity is reached
+current_volunteer_count = get_active_volunteer_count(client)
+MAX_VOLUNTEERS = 20
+volunteer_capacity_reached = current_volunteer_count >= MAX_VOLUNTEERS
 
 # Only apply waiting list logic for hikers (Walking or Both), not pure volunteers
 is_hiker = participation_type in {"Walking", "Both"}
 
-if event_is_full and is_hiker:
+# Only apply volunteer waiting list logic for pure volunteers (Volunteering only), not hikers
+is_volunteer_only = participation_type == "Volunteering"
+
+if hiker_capacity_reached and is_hiker:
     st.warning("⚠︎ The event is currently full. If you aren't updating your information, your details will be added to the waiting list instead.")
+
+if volunteer_capacity_reached and is_volunteer_only:
+    st.warning("⚠︎ The volunteer capacity has been reached. If you aren't updating your information, your details will be added to the waiting list instead.")
 
 # -------------------------------------------------------------------
 # Form UI
@@ -218,9 +230,14 @@ if submitted:
     except Exception:
         pass
 
-    # Logic
-    if event_is_full and is_hiker and not user_exists:
-        # NEW + FULL ⇒ waiting list
+    # ===================================================================
+    # REGISTRATION LOGIC - Handle different scenarios based on capacity
+    # ===================================================================
+    
+    # SCENARIO 1: Volunteer capacity reached for NEW pure volunteers
+    if volunteer_capacity_reached and is_volunteer_only and not user_exists:
+        # NEW VOLUNTEER + VOLUNTEER CAPACITY REACHED ⇒ Add to waiting list
+        # Pure volunteers (not hikers) get their own waiting list when 20 volunteer spots are filled
         final_record = prepare_member_record(draft, True, client)
         try:
             res = client.table("members").insert(final_record).execute()
@@ -232,13 +249,43 @@ if submitted:
             st.error("Could not add you to the waiting list.")
             st.exception(e)
 
-    elif event_is_full and is_hiker and user_exists and existing_member_at_submit.get("on_waiting_list", False):
-        # WAITING LIST + STILL FULL ⇒ cannot proceed
+    # SCENARIO 2: Volunteer capacity reached for EXISTING pure volunteers on waiting list
+    elif volunteer_capacity_reached and is_volunteer_only and user_exists and existing_member_at_submit.get("on_waiting_list", False):
+        # VOLUNTEER WAITING LIST + STILL FULL ⇒ Block editing
+        # Pure volunteers already on waiting list cannot edit details while volunteer capacity is full
+        st.info("You are currently on the waiting list. You cannot edit your details while the volunteer capacity is full.")
+        st.stop()
+
+    # SCENARIO 3: Hiker capacity reached for NEW hikers (Walking or Both)
+    elif hiker_capacity_reached and is_hiker and not user_exists:
+        # NEW HIKER + HIKER CAPACITY REACHED ⇒ Add to waiting list
+        # Hikers (Walking or Both) go to waiting list when 165 hiker spots are filled
+        final_record = prepare_member_record(draft, True, client)
+        try:
+            res = client.table("members").insert(final_record).execute()
+            new_id = res.data[0]["id"]
+            st.session_state["member_id"] = new_id
+            st.success("Thank you for registering!")
+            st.switch_page("pages/8_Thanks.py")
+        except Exception as e:
+            st.error("Could not add you to the waiting list.")
+            st.exception(e)
+
+    # SCENARIO 4: Hiker capacity reached for EXISTING hikers on waiting list
+    elif hiker_capacity_reached and is_hiker and user_exists and existing_member_at_submit.get("on_waiting_list", False):
+        # HIKER WAITING LIST + STILL FULL ⇒ Block editing
+        # Hikers already on waiting list cannot edit details while hiker capacity is full
         st.info("You are currently on the waiting list. You cannot edit your details while the event is full.")
         st.stop()
 
+    # SCENARIO 5: Normal registration flow (capacity not full OR existing active users)
     else:
-        # Event not full OR active user
+        # NORMAL FLOW ⇒ Proceed with registration
+        # Applies when:
+        # - Volunteer capacity not full for volunteers
+        # - Hiker capacity not full for hikers  
+        # - User already exists and is active (not on waiting list)
+        # - Mixed participation types ("Both") when hiker capacity allows
         st.success("Personal details saved!")
         if participation_type == "Volunteering":
             st.switch_page("pages/7_Review.py")
