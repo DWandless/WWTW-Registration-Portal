@@ -124,8 +124,9 @@ _unassigned_members_raw = [
 
 volunteer_members = [
     m
-    for m in _unassigned_members_raw
-    if (m.get("volunteering_area") or "").strip()
+    for m in all_members
+    if not bool(m.get("on_waiting_list"))
+    and (m.get("volunteering_area") or "").strip()
 ]
 
 unassigned_members = [
@@ -454,7 +455,7 @@ with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
 # -----------------------------------------------------
 st.markdown("---")
 st.subheader("Volunteers")
-st.caption("Members who have volunteered and are not assigned to any team. Manage volunteer personal details and volunteering areas below.")
+st.caption("All members who have volunteered (both assigned and unassigned to teams). Manage volunteer personal details and volunteering areas below.")
 
 with st.expander(f"Volunteers ({len(volunteer_members)})"):
     if volunteer_members:
