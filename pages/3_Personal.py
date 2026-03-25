@@ -141,9 +141,12 @@ except Exception:
 
 # Check if event is full
 current_count = get_active_walker_count(client)
-event_is_full = current_count >= 165 # This should always be 5 * MAX_TEAMS
+event_is_full = current_count >= 165 # This is MAX number of hikers allowed and should always be 5 * MAX_TEAMS
 
-if event_is_full:
+# Only apply waiting list logic for hikers (Walking or Both), not pure volunteers
+is_hiker = participation_type in {"Walking", "Both"}
+
+if event_is_full and is_hiker:
     st.warning("⚠︎ The event is currently full. If you aren't updating your information, your details will be added to the waiting list instead.")
 
 # -------------------------------------------------------------------
@@ -216,7 +219,7 @@ if submitted:
         pass
 
     # Logic
-    if event_is_full and not user_exists:
+    if event_is_full and is_hiker and not user_exists:
         # NEW + FULL ⇒ waiting list
         final_record = prepare_member_record(draft, True, client)
         try:
@@ -229,7 +232,7 @@ if submitted:
             st.error("Could not add you to the waiting list.")
             st.exception(e)
 
-    elif event_is_full and user_exists and existing_member_at_submit.get("on_waiting_list", False):
+    elif event_is_full and is_hiker and user_exists and existing_member_at_submit.get("on_waiting_list", False):
         # WAITING LIST + STILL FULL ⇒ cannot proceed
         st.info("You are currently on the waiting list. You cannot edit your details while the event is full.")
         st.stop()
