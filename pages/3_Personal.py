@@ -141,7 +141,7 @@ except Exception:
 
 # Check if event is full
 current_count = get_active_walker_count(client)
-event_is_full = current_count >= 150
+event_is_full = current_count >= 165 # This should always be 5 * MAX_TEAMS
 
 if event_is_full:
     st.warning("⚠︎ The event is currently full. If you aren't updating your information, your details will be added to the waiting list instead.")

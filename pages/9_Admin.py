@@ -124,7 +124,7 @@ _unassigned_members_raw = [
 
 volunteer_members = [
     m
-    for m in all_members
+    for m in _unassigned_members_raw
     if (m.get("volunteering_area") or "").strip()
 ]
 
@@ -454,7 +454,7 @@ with st.expander(f"Unassigned Members ({len(unassigned_members)})"):
 # -----------------------------------------------------
 st.markdown("---")
 st.subheader("Volunteers")
-st.caption("Members who have agreed to also volunteer. Manage volunteer personal details and volunteering areas below.")
+st.caption("Members who have volunteered and are not assigned to any team. Manage volunteer personal details and volunteering areas below.")
 
 with st.expander(f"Volunteers ({len(volunteer_members)})"):
     if volunteer_members:

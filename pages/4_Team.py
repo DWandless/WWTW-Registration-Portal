@@ -13,6 +13,9 @@ from helpers import (
 import re
 import unicodedata
 
+# Configuration variable to pause new team creation, If this is set to True then no new Teams will be able to be registered AT ALL (overrules team waiting list)
+pause_new_team_creation = True
+
 
 # -------------------------------------------------------
 # Sanitization + Validation for Team Names
@@ -134,7 +137,7 @@ if team_ids:
     except Exception:
         team_leader_by_id = {}
 
-MAX_TEAMS = 35
+MAX_TEAMS = 33
 team_cap_reached = len(teams) >= MAX_TEAMS
 
 # -------------------------------------------------------
@@ -144,17 +147,34 @@ current_team_id = draft.get("team_id") if "team_id" in draft else None
 
 st.write("---")
 
-options = ["Continue Independently", "Join a Team", "Create a Team"]
-if team_cap_reached:
+options = ["Continue Independently", "Join a Team"]
+if not pause_new_team_creation:
+    options.append("Create a Team")
+
+if team_cap_reached and not pause_new_team_creation:
     st.warning(
         "The maximum number of teams has been reached. "
         "If you continue to register a new team, it will be added to the waiting list and you will be notified if a spot becomes available. "
     )
 
+if pause_new_team_creation:
+    st.warning(
+        "New team creation is currently paused. "
+        "You can either join an existing team or continue as an independent participant."
+    )
+
+# Determine default index for selectbox
+default_index = 0
+if current_team_id is not None:
+    default_index = 1
+elif draft.get("team_action") == "create" and pause_new_team_creation:
+    # If they previously selected "Create a Team" but it's now disabled, default to "Continue Independently"
+    default_index = 0
+
 choice = st.selectbox(
     "Select an option:",
     options,
-    index=(0 if current_team_id is None else 1),
+    index=default_index,
 )
 
 st.markdown("---")
