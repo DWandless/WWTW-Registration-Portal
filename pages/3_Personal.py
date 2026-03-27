@@ -142,7 +142,7 @@ except Exception:
 
 # Check if event is full for either hikers or volunteers - SET CAPACITY HERE
 current_hiker_count = get_active_walker_count(client)
-hiker_capacity_reached = current_hiker_count >= 165 # This is MAX number of hikers allowed and should always be 5 * MAX_TEAMS
+hiker_capacity_reached = current_hiker_count >= 170 # This is MAX number of hikers allowed and should always be 5 * MAX_TEAMS
 
 # Check if volunteer capacity is reached
 current_volunteer_count = get_active_volunteer_count(client)

@@ -154,7 +154,7 @@ if submit:
                 st.error("A team with that name already exists. Please return to the Team step and choose another name.")
                 st.stop()
 
-            MAX_TEAMS = 33
+            MAX_TEAMS = 34
             team_count_res = client.table("teams").select("id", count="exact").execute()
             team_cap_reached = (team_count_res.count or 0) >= MAX_TEAMS
 
