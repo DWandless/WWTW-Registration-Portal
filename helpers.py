@@ -262,7 +262,6 @@ def members_to_dataframe(members, team_lookup=None):
         "Hiking Experience": m.get("hiking_experience"),
         "Notes": m.get("notes"),
         "On Waiting List": bool(m.get("on_waiting_list")),
-        "Dropped Out": bool(m.get("dropped_out"))
 
     } for m in members])
 
@@ -314,7 +313,7 @@ def export_excel(client):
         "Team Name", "On Waiting List", "Name", "Email", "Employee ID", "Mobile Number", "Preferred Route", "Organisation",
         "Role", "Shirt Size", "Forces Veteran", "Camping Friday",
         "Camping Saturday", "Taking Car", "Hiking Experience",
-        "Travelling From", "Notes", "Dropped Out", "Volunteering Area"
+        "Travelling From", "Notes", "Volunteering Area"
     ]
 
     ws.append(HEADERS)
@@ -349,7 +348,6 @@ def export_excel(client):
             m.get("hiking_experience", ""),
             m.get("travelling_from", ""),
             m.get("notes", ""), 
-            m.get("dropped_out", False),
             m.get("volunteering_area", ""),
         ])
 
@@ -448,7 +446,6 @@ COLUMN_MAP = {
     "Notes": "notes",
     "Hiking Experience": "hiking_experience",
     "Travelling From": "travelling_from",
-    "Dropped Out": "dropped_out",
 }
 
 
@@ -642,7 +639,7 @@ def prepare_member_record(draft: dict, on_waiting_list: bool | None = None, clie
         "team_id", "preferred_route", "role",
         "shirt_size", "forces_vet", "camping_fri", "camping_sat",
         "taking_car", "travelling_from", "notes", "hiking_experience",
-        "mobile_number", "organisation", "on_waiting_list", "dropped_out", "volunteering_area"
+        "mobile_number", "organisation", "on_waiting_list", "volunteering_area"
     }
 
     record = {}

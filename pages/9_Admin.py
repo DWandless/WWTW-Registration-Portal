@@ -98,7 +98,7 @@ team_options_with_unassigned = team_options + ["Unassigned"]
 member_select_cols = (
     "id, team_id, role, full_name, organisation, employee_id, employee_email, mobile_number, "
     "preferred_route, shirt_size, travelling_from, forces_vet, camping_fri, camping_sat, taking_car, "
-    "hiking_experience, notes, on_waiting_list, dropped_out, volunteering_area"
+    "hiking_experience, notes, on_waiting_list, volunteering_area"
 )
 all_members = client.table("members").select(member_select_cols).execute().data or []
 valid_team_ids = set(team_id_to_name.keys())
@@ -421,7 +421,6 @@ dropdowns = {
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
     "Volunteering Area": st.column_config.TextColumn("Volunteering Area"),
-    "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
 
 }
 
@@ -477,7 +476,6 @@ with st.expander(f"Volunteers ({len(volunteer_members)})"):
             "Forces Veteran",
             "Volunteering Area",
             "On Waiting List",
-            "Dropped Out",
         ]
 
         df_volunteers = df_volunteers[[c for c in volunteer_visible_cols if c in df_volunteers.columns]]

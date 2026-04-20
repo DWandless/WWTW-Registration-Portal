@@ -77,7 +77,7 @@ _current_user_rows = (
     .select(
         "id, team_id, role, full_name, employee_email, employee_id, mobile_number, organisation, "
         "preferred_route, shirt_size, forces_vet, camping_fri, camping_sat, taking_car, travelling_from, "
-        "notes, hiking_experience, on_waiting_list, dropped_out, volunteering_area"
+        "notes, hiking_experience, on_waiting_list, volunteering_area"
     )
     .eq("employee_email", user_email)
     .limit(1)
