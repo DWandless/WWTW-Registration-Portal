@@ -1,6 +1,7 @@
 from pathlib import Path
 import streamlit as st
 import pandas as pd
+import numpy as np
 import base64
 import jwt
 from PIL import Image
@@ -310,7 +311,7 @@ def export_excel(client):
     ws.title = "All Members"
 
     HEADERS = [
-        "Team Name", "On Waiting List", "Name", "Email", "Mobile Number", "Preferred Route", "Organisation",
+        "Team Name", "On Waiting List", "Name", "Email", "Employee ID", "Mobile Number", "Preferred Route", "Organisation",
         "Role", "Shirt Size", "Forces Veteran", "Camping Friday",
         "Camping Saturday", "Taking Car", "Hiking Experience",
         "Travelling From", "Notes", "Dropped Out", "Volunteering Area"
@@ -335,6 +336,7 @@ def export_excel(client):
             "Yes" if m.get("on_waiting_list") else "No",
             m.get("full_name", ""),
             m.get("employee_email", ""),
+            m.get("employee_id", ""),
             m.get("mobile_number", ""),
             m.get("preferred_route", ""),
             m.get("organisation", ""),
@@ -482,6 +484,9 @@ def apply_member_updates(edited_df, original_df, team_name_to_id, client):
             # Regular field update
             db_col = COLUMN_MAP.get(col)
             if db_col and new_val != old_val:
+                # Skip NaN values as they're not JSON compliant
+                if isinstance(new_val, float) and math.isnan(new_val):
+                    continue
                 changes[db_col] = new_val
 
         if changes:

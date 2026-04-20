@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 
 from helpers import (
     init_page,
@@ -308,6 +309,9 @@ def apply_team_updates(edited_df, original_df, client):
                 old_val = bool(old_val)
 
             if new_val != old_val:
+                # Skip NaN values as they're not JSON compliant
+                if isinstance(new_val, float) and math.isnan(new_val):
+                    continue
                 changes[db_col] = new_val
 
         if changes:
