@@ -239,7 +239,6 @@ self_visible_columns = [
     "Hiking Experience",
     "Notes",
     "On Waiting List",
-    "Dropped Out",
 ]
 
 df_self_view = df_self[self_visible_columns].copy()
@@ -254,7 +253,6 @@ self_dropdowns = {
     "Camping Saturday": st.column_config.CheckboxColumn("Camping Saturday"),
     "Taking Car": st.column_config.CheckboxColumn("Taking Car"),
     "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
-    "Dropped Out": st.column_config.CheckboxColumn("Dropped Out"),
     "Notes": st.column_config.TextColumn("Notes"),
     "Hiking Experience": st.column_config.TextColumn("Hiking Experience"),
     "Travelling From": st.column_config.TextColumn("Travelling From"),
@@ -266,7 +264,6 @@ disabled_columns = [
     "Full Name",
     "Employee Email",
     "On Waiting List",
-    "Dropped Out",
 ]
 
 # Hide non-editable columns from the self-service editor
