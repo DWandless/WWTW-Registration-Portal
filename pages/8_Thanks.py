@@ -37,15 +37,11 @@ st.markdown(
             overflow: hidden;
         }}
 
-        .login-wrap {{
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }}
-
-        .glass-card {{
+        .st-key-thanks_card {{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: min(560px, 92vw);
             background: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.28);
@@ -80,12 +76,12 @@ st.markdown(
 st.markdown(
     """
     <style>
-    div[data-testid="stButton"] {
+    .st-key-thanks_card div[data-testid="stButton"] {
         display: flex;
         justify-content: center;
     }
-    div[data-testid="stButton"] > button {
-        width: min(560px, 92vw);
+    .st-key-thanks_card div[data-testid="stButton"] > button {
+        width: 100%;
         padding: 14px 18px;
         background: rgba(255, 255, 255, 0.85);
         color: black;
@@ -95,7 +91,7 @@ st.markdown(
         font-size: 1.05rem;
         transition: all 0.25s ease;
     }
-    div[data-testid="stButton"] > button:hover {
+    .st-key-thanks_card div[data-testid="stButton"] > button:hover {
         background: rgba(0, 123, 255, 1);
         color: white;
     }
@@ -104,17 +100,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(
-    """
-    <div class="login-wrap">
-      <div class="glass-card">
+with st.container(key="thanks_card"):
+    st.markdown(
+        """
         <div class="title">Thank You!</div>
         <div class="body">Your registration has been successfully submitted. We appreciate your participation!</div>
-    """,
-    unsafe_allow_html=True,
-)
+        """,
+        unsafe_allow_html=True,
+    )
 
-if st.button("Return Home"):
-    st.switch_page("Home.py")
-
-st.markdown("</div></div>", unsafe_allow_html=True)
+    if st.button("Return Home"):
+        st.switch_page("Home.py")
