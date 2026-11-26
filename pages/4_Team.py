@@ -283,7 +283,10 @@ elif choice == "Create a Team":
     #     st.stop()
 
     with st.form("create_team_form"):
-        new_name_raw = st.text_input("Team Name *")
+        new_name_raw = st.text_input(
+            "Team Name *",
+            help="Must include term 'DXC'. 2–40 letters/numbers, spaces, hyphens, or apostrophes.",
+        )
         new_route = st.selectbox("Route *", ["Peak", "Tough", "Tougher", "Toughest"])
         submitted = st.form_submit_button("Create Team")
 
