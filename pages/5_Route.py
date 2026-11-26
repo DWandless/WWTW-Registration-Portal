@@ -105,6 +105,13 @@ ROUTE_FILES = {
         "note": "Requires prior endurance experience and full team",
         "ascent_hint_m": 1570,
     },
+    "Toughest": {
+        "difficulty": "Extreme",
+        "color": "red",
+        "default_path": "assets/toughest.gpx",
+        "note": "Requires prior endurance experience and full team",
+        "ascent_hint_m": 2000,
+    },
 }
 
 if team_route:

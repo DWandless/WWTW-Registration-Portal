@@ -29,9 +29,9 @@ def validate_logistics(travelling_from: str, notes: str, experience: str, requir
     notes_clean = sanitize_free_text(notes, 500)
     experience_clean = sanitize_free_text(experience, 500)
 
-    # Required when route is Tougher
+    # Required when route is Tougher or Toughest
     if required_experience and not experience_clean:
-        return False, "Hiking experience is required for the Tougher route.", None
+        return False, "Hiking experience is required for the Tougher and Toughest routes.", None
 
     return True, "", {
         "travelling_from": travelling_from_clean or None,
@@ -113,12 +113,12 @@ with st.form("logistics_form", clear_on_submit=False):
         st.checkbox("Camping Saturday night", key="camping_sat", value=defaults["camping_sat"])
 
     # Conditional experience field
-    if preferred_route == "Tougher":
+    if preferred_route in ("Tougher", "Toughest"):
         st.text_area(
             "Hiking Experience *",
             key="experience",
             value=defaults["experience"],
-            help="Required for participants taking the Tougher route."
+            help="Required for participants taking the Tougher or Toughest route, Toughest requires prior completion of Tougher."
         )
     else:
         with st.expander("Additional Info (optional)"):
@@ -144,7 +144,7 @@ if submitted:
         travelling_from_raw,
         notes_raw,
         experience_raw,
-        required_experience=(preferred_route == "Tougher")
+        required_experience=(preferred_route in ("Tougher", "Toughest"))
     )
 
     if not is_valid:

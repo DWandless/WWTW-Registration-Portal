@@ -235,6 +235,7 @@ if token and "id_token" in token:
                 "Peak": "DXCPEAK100",
                 "Tough": "DXCTOUGH100",
                 "Tougher": "DXCTOUGHER100",
+                "Toughest": "DXCTOUGHEST100",
             }
             registration_code = route_to_code.get(team_route)
         except Exception:

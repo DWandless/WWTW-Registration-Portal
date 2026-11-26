@@ -246,7 +246,7 @@ df_self_ids = df_self.copy()
 
 self_dropdowns = {
     "Organisation": st.column_config.SelectboxColumn("Organisation", options=["L-ES", "L-CSC", "Velonetic", "CSC"]),
-    "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher"]),
+    "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher", "Toughest"]),
     "Shirt Size": st.column_config.SelectboxColumn("Shirt Size", options=["XS", "S", "M", "L", "XL", "XXL"]),
     "Forces Veteran": st.column_config.CheckboxColumn("Forces Veteran"),
     "Camping Friday": st.column_config.CheckboxColumn("Camping Friday"),
@@ -491,7 +491,7 @@ if is_team_leader:
                 st.exception(e)
 
     with st.expander("Update team route", expanded=False):
-        route_options = ["Peak", "Tough", "Tougher"]
+        route_options = ["Peak", "Tough", "Tougher", "Toughest"]
         current_route = team.get("route") if team.get("route") in route_options else route_options[0]
         new_route = st.selectbox("Route", route_options, index=route_options.index(current_route))
 

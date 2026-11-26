@@ -405,7 +405,7 @@ def render_team_editor(df_teams, client, title, dropdowns, disabled_columns=None
 dropdowns = {
     "Team Name": st.column_config.SelectboxColumn("Team Name", options=team_options_with_unassigned),
     # Use the canonical route keys used elsewhere in the app
-    "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher"]),
+    "Preferred Route": st.column_config.SelectboxColumn("Preferred Route", options=["Peak", "Tough", "Tougher", "Toughest"]),
     "Organisation": st.column_config.SelectboxColumn(
         "Organisation",
         options=["L-ES", "L-CSC", "Velonetic", "CSC"],
@@ -565,7 +565,7 @@ unassigned_teams_data = (
 team_waiting_dropdowns = {
     "Team Leader": st.column_config.TextColumn("Team Leader"),
     "Team Name": st.column_config.TextColumn("Team Name"),
-    "Route": st.column_config.SelectboxColumn("Route", options=["Peak", "Tough", "Tougher"]),
+    "Route": st.column_config.SelectboxColumn("Route", options=["Peak", "Tough", "Tougher", "Toughest"]),
     "On Waiting List": st.column_config.CheckboxColumn("On Waiting List"),
 }
 

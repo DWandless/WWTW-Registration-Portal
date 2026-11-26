@@ -14,7 +14,7 @@ import re
 import unicodedata
 
 # Configuration variable to pause new team creation, If this is set to True then no new Teams will be able to be registered AT ALL (overrules team waiting list)
-pause_new_team_creation = True
+pause_new_team_creation = False
 
 
 # -------------------------------------------------------
@@ -137,7 +137,7 @@ if team_ids:
     except Exception:
         team_leader_by_id = {}
 
-MAX_TEAMS = 34
+MAX_TEAMS = 15
 team_cap_reached = len(teams) >= MAX_TEAMS
 
 # -------------------------------------------------------
@@ -284,7 +284,7 @@ elif choice == "Create a Team":
 
     with st.form("create_team_form"):
         new_name_raw = st.text_input("Team Name *")
-        new_route = st.selectbox("Route *", ["Peak", "Tough", "Tougher"])
+        new_route = st.selectbox("Route *", ["Peak", "Tough", "Tougher", "Toughest"])
         submitted = st.form_submit_button("Create Team")
 
     if submitted:
