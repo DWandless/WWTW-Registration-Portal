@@ -76,17 +76,13 @@ st.markdown(
 st.markdown(
     """
     <style>
-    .st-key-thanks_card [data-testid="stVerticalBlock"] {
-        align-items: center;
+    .st-key-thanks_card [data-testid="stElementContainer"] {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
-    .st-key-thanks_card div[data-testid="stButton"] {
-        display: flex !important;
-        justify-content: center !important;
-        width: 100% !important;
-    }
-    .st-key-thanks_card div[data-testid="stButton"] button {
-        width: 100% !important;
-        margin: 0 auto;
+    .st-key-thanks_card button[data-testid^="stBaseButton"] {
+        width: 100%;
         padding: 14px 18px;
         background: rgba(255, 255, 255, 0.85);
         color: black;
@@ -96,7 +92,7 @@ st.markdown(
         font-size: 1.05rem;
         transition: all 0.25s ease;
     }
-    .st-key-thanks_card div[data-testid="stButton"] button:hover {
+    .st-key-thanks_card button[data-testid^="stBaseButton"]:hover {
         background: rgba(0, 123, 255, 1);
         color: white;
     }
